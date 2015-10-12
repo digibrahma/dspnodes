@@ -1,0 +1,4 @@
+mAudiTelcoTargeting is Copyright openxservices.com<br>
+You may use mAudiTelcoTargeting on 1 domain / OpenX adserver instalation.<br>
+You do not have have any rights to reverse engenere, decompile,<br>
+or resale mAudiTelcoTargeting in any form.

@@ -1,0 +1,74 @@
+
+apStatsGraphs
+=============
+Revive Ad Server and OpenX Source have on-screen reports that display the
+statistics for advertisers, campaigns, websites, and zones, and an overall
+report that shows "global history". This free plugin adds new items to the
+Statistics section, that displays drill-down graphs for all the aforementioned
+screens.
+
+Licence
+=======
+This plugin has been released under the Creative Commons Attribution-NoDerivs
+licence, version 3.0 Unported. Human readable summary and full legal code are
+available at:
+
+http://creativecommons.org/licenses/by-nd/3.0/
+
+Exceptions
+==========
+This plugin includes code from Open Flash Chart 2, released under LGPL:
+
+http://teethgrinder.co.uk/open-flash-chart-2/
+
+Change Log
+==========
+
+v1.0.5
+    * Added compatibility with Revive Adserver 3.0.3
+
+v1.0.4
+    * Fixed OFC vulnerability reported at http://osvdb.org/59051 (again):
+      when upgrading from a previous version the affected file was left in
+      place by the OpenX plugin framework instead of being deleted,
+      effectively leaving the instance still vulnerable. This fix adds back
+      an empty file with the same name, to work around the aforementioned
+      OpenX bug.
+
+v1.0.3
+    * Fixed OFC vulnerability reported at http://osvdb.org/59051
+
+v1.0.2
+    * Properly fixed the issue with scientific notation: the previous fix was
+      generating a malformed JSON response.
+    * Added built-in update checker
+
+v1.0.1
+    * Fixed compatibility issue with PHP < 5.2
+    * Fixed problem with very big numbers breaking OFC, as it currently cannot
+      deal with the scientific notation that is used by default by json_encode
+    * Fixed problem with graphs not being displayed with IE and SSL under some
+      circumstances
+    * Fixed "Next" button appearing out of place with IE8
+
+v1.0.0
+    * Switched to Open Flash Chart 2
+    * More graphs are available:
+          o Global History
+          o Advertiser History
+          o Campaign History
+          o Banner History
+          o Website History
+          o Zone History
+    * Any account type can now access the graphs
+    * Impressions and clicks are now displayed as bar charts with independent axis
+    * CTR stats are displayed with a line chart
+    * Default view is now current month with daily breakdown
+    * Graphs are browsable up to monthly breakdown or down to hourly level
+    * Previous/next year/month/day buttons available
+
+v0.9.0-beta:
+    * First release
+    * Global history graph available for admin and manager accounts
+    * Shows last year daily impressions and clicks
+    * Uses the Google Visualization API

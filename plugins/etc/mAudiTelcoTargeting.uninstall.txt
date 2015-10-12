@@ -1,0 +1,3 @@
+Warning! <br>Uninstalling this plugin will delete all local information relating to your use
+of mAudiTelcoTargeting to date. Please ensure that you perform a full backup of the plugin data,
+should you require one, before uninstalling this plugin.

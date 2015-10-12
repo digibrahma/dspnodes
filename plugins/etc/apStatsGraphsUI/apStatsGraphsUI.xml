@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<?xml-stylesheet type="text/xsl" href=""?>
+
+<plugin>
+    <name>apStatsGraphsUI</name>
+    <creationDate>2014-03-13</creationDate>
+    <author>AdserverPlugins.com</author>
+    <authorEmail>info@adserverplugins.com</authorEmail>
+    <authorUrl>http://www.adserverplugins.com/openx/free-plugins-for-openx-ad-server/statistics-as-graphs/</authorUrl>
+    <license><![CDATA[
+        <a href="http://creativecommons.org/licenses/by-nd/3.0/">Creative Commons Attribution-No Derivative Works 3.0 Unported</a>
+    ]]></license>
+    <description>Display OpenX statistics as graphs - Free Version</description>
+    <version>1.0.5</version>
+    <oxversion>2.8.0</oxversion>
+    <extends>admin</extends>
+    <install>
+        <files>
+            <file path="{ADMINPATH}/">index.php</file>
+            <file path="{ADMINPATH}/">graph-data.php</file>
+            <file path="{ADMINPATH}/lib/">apGraph.php</file>
+            <file path="{ADMINPATH}/lib/apGraph/">Daily.php</file>
+            <file path="{ADMINPATH}/lib/apGraph/">Hourly.php</file>
+            <file path="{ADMINPATH}/lib/apGraph/">Monthly.php</file>
+
+            <file path="{ADMINPATH}/">open-flash-chart.swf</file>
+            <file path="{ADMINPATH}/js/">swfobject.js</file>
+            <file path="{ADMINPATH}/lib/">dot_base.php</file>
+            <file path="{ADMINPATH}/lib/">json_format.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_area_base.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_area_hollow.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_area_line.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_arrow.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_bar.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_bar_3d.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_bar_base.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_bar_filled.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_bar_glass.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_bar_sketch.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_bar_stack.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_candle.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_hbar.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_line.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_line_base.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_line_dot.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_line_hollow.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_line_style.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_menu.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_pie.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_radar_axis.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_radar_axis_labels.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_radar_spoke_labels.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_scatter.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_scatter_line.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_shape.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_sugar.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_tags.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_title.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_tooltip.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_upload_image.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_x_axis.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_x_axis_label.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_x_axis_labels.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_x_legend.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_y_axis.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_y_axis_base.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_y_axis_label.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_y_axis_labels.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_y_axis_right.php</file>
+            <file path="{ADMINPATH}/lib/">ofc_y_legend.php</file>
+            <file path="{ADMINPATH}/lib/">open-flash-chart-object.php</file>
+            <file path="{ADMINPATH}/lib/">open-flash-chart.php</file>
+        </files>
+        <navigation>
+            <admin>
+                <menu index="apsg-global" insertafter="2.2" link="plugins/apStatsGraphsUI/index.php">Global History Graph</menu>
+                <menu index="apsg-advertiser" insertafter="2.1.1" link="plugins/apStatsGraphsUI/index.php?entity=advertiser&amp;clientid={clientid}">Advertiser History Graph</menu>
+                <menu index="apsg-campaign" insertafter="2.1.2.1" link="plugins/apStatsGraphsUI/index.php?entity=campaign&amp;clientid={clientid}&amp;campaignid={campaignid}">Campaign History Graph</menu>
+                <menu index="apsg-banner" insertafter="2.1.2.2.1" link="plugins/apStatsGraphsUI/index.php?entity=banner&amp;clientid={clientid}&amp;campaignid={campaignid}&amp;bannerid={bannerid}">Banner History Graph</menu>
+                <menu index="apsg-banner-affiliate" insertafter="2.1.2.2.2.1" link="plugins/apStatsGraphsUI/index.php?entity=banner-affiliate&amp;clientid={clientid}&amp;campaignid={campaignid}&amp;bannerid={bannerid}&amp;affiliateid={affiliateid}">banner-affiliate History Graph</menu>
+                <menu index="apsg-banner-zone" insertafter="2.1.2.2.2.2" link="plugins/apStatsGraphsUI/index.php?entity=banner-zone&amp;clientid={clientid}&amp;campaignid={campaignid}&amp;bannerid={bannerid}&amp;affiliateid={affiliateid}&amp;zoneid={zoneid}">banner-zone History Graph</menu>
+                <menu index="apsg-campaign-affiliate" insertafter="2.1.2.3.1" link="plugins/apStatsGraphsUI/index.php?entity=campaign-affiliate&amp;clientid={clientid}&amp;campaignid={campaignid}&amp;affiliateid={affiliateid}">campaign-affiliate History Graph</menu>
+                <menu index="apsg-campaign-zone" insertafter="2.1.2.3.2" link="plugins/apStatsGraphsUI/index.php?entity=campaign-zone&amp;clientid={clientid}&amp;campaignid={campaignid}&amp;affiliateid={affiliateid}&amp;zoneid={zoneid}">campaign-zone History Graph</menu>
+                <menu index="apsg-advertiser-affiliate" insertafter="2.1.3.1" link="plugins/apStatsGraphsUI/index.php?entity=advertiser-affiliate&amp;clientid={clientid}&amp;affiliateid={affiliateid}">advertiser-affiliate History Graph</menu>
+                <menu index="apsg-advertiser-zone" insertafter="2.1.3.2" link="plugins/apStatsGraphsUI/index.php?entity=advertiser-zone&amp;clientid={clientid}&amp;affiliateid={affiliateid}&amp;zoneid={zoneid}">advertiser-zone History Graph</menu>
+                <menu index="apsg-affiliate" insertafter="2.4.1" link="plugins/apStatsGraphsUI/index.php?entity=affiliate&amp;affiliateid={affiliateid}">Website History Graph</menu>
+                <menu index="apsg-zone" insertafter="2.4.2.1" link="plugins/apStatsGraphsUI/index.php?entity=zone&amp;affiliateid={affiliateid}&amp;zoneid={zoneid}">Zone History Graph</menu>
+                <menu index="apsg-zone-campaign" insertafter="2.4.2.2.1" link="plugins/apStatsGraphsUI/index.php?entity=zone-campaign&amp;affiliateid={affiliateid}&amp;zoneid={zoneid}&amp;campaignid={campaignid}">zone-campaign History Graph</menu>
+                <menu index="apsg-zone-banner" insertafter="2.4.2.2.2" link="plugins/apStatsGraphsUI/index.php?entity=zone-banner&amp;affiliateid={affiliateid}&amp;zoneid={zoneid}&amp;campaignid={campaignid}&amp;bannerid={bannerid}">zone-banner History Graph</menu>
+                <menu index="apsg-affiliate-campaign" insertafter="2.4.3.1" link="plugins/apStatsGraphsUI/index.php?entity=affiliate-campaign&amp;affiliateid={affiliateid}&amp;campaignid={campaignid}">affiliate-campaign History Graph</menu>
+                <menu index="apsg-affiliate-banner" insertafter="2.4.3.2" link="plugins/apStatsGraphsUI/index.php?entity=affiliate-banner&amp;affiliateid={affiliateid}&amp;campaignid={campaignid}&amp;bannerid={bannerid}">affiliate-banner History Graph</menu>
+            </admin>
+            <manager>
+                <menu index="apsg-global" insertafter="2.2" link="plugins/apStatsGraphsUI/index.php">Global History Graph</menu>
+                <menu index="apsg-advertiser" insertafter="2.1.1" link="plugins/apStatsGraphsUI/index.php?entity=advertiser&amp;clientid={clientid}">Advertiser History Graph</menu>
+                <menu index="apsg-campaign" insertafter="2.1.2.1" link="plugins/apStatsGraphsUI/index.php?entity=campaign&amp;clientid={clientid}&amp;campaignid={campaignid}">Campaign History Graph</menu>
+                <menu index="apsg-banner" insertafter="2.1.2.2.1" link="plugins/apStatsGraphsUI/index.php?entity=banner&amp;clientid={clientid}&amp;campaignid={campaignid}&amp;bannerid={bannerid}">Banner History Graph</menu>
+                <menu index="apsg-banner-affiliate" insertafter="2.1.2.2.2.1" link="plugins/apStatsGraphsUI/index.php?entity=banner-affiliate&amp;clientid={clientid}&amp;campaignid={campaignid}&amp;bannerid={bannerid}&amp;affiliateid={affiliateid}">banner-affiliate History Graph</menu>
+                <menu index="apsg-banner-zone" insertafter="2.1.2.2.2.2" link="plugins/apStatsGraphsUI/index.php?entity=banner-zone&amp;clientid={clientid}&amp;campaignid={campaignid}&amp;bannerid={bannerid}&amp;affiliateid={affiliateid}&amp;zoneid={zoneid}">banner-zone History Graph</menu>
+                <menu index="apsg-campaign-affiliate" insertafter="2.1.2.3.1" link="plugins/apStatsGraphsUI/index.php?entity=campaign-affiliate&amp;clientid={clientid}&amp;campaignid={campaignid}&amp;affiliateid={affiliateid}">campaign-affiliate History Graph</menu>
+                <menu index="apsg-campaign-zone" insertafter="2.1.2.3.2" link="plugins/apStatsGraphsUI/index.php?entity=campaign-zone&amp;clientid={clientid}&amp;campaignid={campaignid}&amp;affiliateid={affiliateid}&amp;zoneid={zoneid}">campaign-zone History Graph</menu>
+                <menu index="apsg-advertiser-affiliate" insertafter="2.1.3.1" link="plugins/apStatsGraphsUI/index.php?entity=advertiser-affiliate&amp;clientid={clientid}&amp;affiliateid={affiliateid}">advertiser-affiliate History Graph</menu>
+                <menu index="apsg-advertiser-zone" insertafter="2.1.3.2" link="plugins/apStatsGraphsUI/index.php?entity=advertiser-zone&amp;clientid={clientid}&amp;affiliateid={affiliateid}&amp;zoneid={zoneid}">advertiser-zone History Graph</menu>
+                <menu index="apsg-affiliate" insertafter="2.4.1" link="plugins/apStatsGraphsUI/index.php?entity=affiliate&amp;affiliateid={affiliateid}">Website History Graph</menu>
+                <menu index="apsg-zone" insertafter="2.4.2.1" link="plugins/apStatsGraphsUI/index.php?entity=zone&amp;affiliateid={affiliateid}&amp;zoneid={zoneid}">Zone History Graph</menu>
+                <menu index="apsg-zone-campaign" insertafter="2.4.2.2.1" link="plugins/apStatsGraphsUI/index.php?entity=zone-campaign&amp;affiliateid={affiliateid}&amp;zoneid={zoneid}&amp;campaignid={campaignid}">zone-campaign History Graph</menu>
+                <menu index="apsg-zone-banner" insertafter="2.4.2.2.2" link="plugins/apStatsGraphsUI/index.php?entity=zone-banner&amp;affiliateid={affiliateid}&amp;zoneid={zoneid}&amp;campaignid={campaignid}&amp;bannerid={bannerid}">zone-banner History Graph</menu>
+                <menu index="apsg-affiliate-campaign" insertafter="2.4.3.1" link="plugins/apStatsGraphsUI/index.php?entity=affiliate-campaign&amp;affiliateid={affiliateid}&amp;campaignid={campaignid}">affiliate-campaign History Graph</menu>
+                <menu index="apsg-affiliate-banner" insertafter="2.4.3.2" link="plugins/apStatsGraphsUI/index.php?entity=affiliate-banner&amp;affiliateid={affiliateid}&amp;campaignid={campaignid}&amp;bannerid={bannerid}">affiliate-banner History Graph</menu>
+            </manager>
+            <advertiser>
+                <menu index="apsg-advertiser" insertafter="1.1" link="plugins/apStatsGraphsUI/index.php?entity=advertiser&amp;clientid={clientid}">Advertiser History Graph</menu>
+                <menu index="apsg-campaign" insertafter="1.2.1" link="plugins/apStatsGraphsUI/index.php?entity=campaign&amp;clientid={clientid}&amp;campaignid={campaignid}">Campaign History Graph</menu>
+                <menu index="apsg-banner" insertafter="1.2.2.1" link="plugins/apStatsGraphsUI/index.php?entity=banner&amp;clientid={clientid}&amp;campaignid={campaignid}&amp;bannerid={bannerid}">Banner History Graph</menu>
+                <menu index="apsg-banner-affiliate" insertafter="1.2.2.4.1" link="plugins/apStatsGraphsUI/index.php?entity=banner-affiliate&amp;clientid={clientid}&amp;campaignid={campaignid}&amp;bannerid={bannerid}&amp;affiliateid={affiliateid}">banner-affiliate History Graph</menu>
+                <menu index="apsg-banner-zone" insertafter="1.2.2.4.2" link="plugins/apStatsGraphsUI/index.php?entity=banner-zone&amp;clientid={clientid}&amp;campaignid={campaignid}&amp;bannerid={bannerid}&amp;affiliateid={affiliateid}&amp;zoneid={zoneid}">banner-zone History Graph</menu>
+                <menu index="apsg-campaign-affiliate" insertafter="1.2.3.1" link="plugins/apStatsGraphsUI/index.php?entity=campaign-affiliate&amp;clientid={clientid}&amp;campaignid={campaignid}&amp;affiliateid={affiliateid}">campaign-affiliate History Graph</menu>
+                <menu index="apsg-campaign-zone" insertafter="1.2.3.2" link="plugins/apStatsGraphsUI/index.php?entity=campaign-zone&amp;clientid={clientid}&amp;campaignid={campaignid}&amp;affiliateid={affiliateid}&amp;zoneid={zoneid}">campaign-zone History Graph</menu>
+                <menu index="apsg-advertiser-affiliate" insertafter="1.3.1" link="plugins/apStatsGraphsUI/index.php?entity=advertiser-affiliate&amp;clientid={clientid}&amp;affiliateid={affiliateid}">advertiser-affiliate History Graph</menu>
+                <menu index="apsg-advertiser-zone" insertafter="1.3.2" link="plugins/apStatsGraphsUI/index.php?entity=advertiser-zone&amp;clientid={clientid}&amp;affiliateid={affiliateid}&amp;zoneid={zoneid}">advertiser-zone History Graph</menu>
+            </advertiser>
+            <trafficker>
+                <menu index="apsg-affiliate" insertafter="1.1" link="plugins/apStatsGraphsUI/index.php?entity=affiliate&amp;affiliateid={affiliateid}">Website History Graph</menu>
+                <menu index="apsg-zone" insertafter="1.2.1" link="plugins/apStatsGraphsUI/index.php?entity=zone&amp;affiliateid={affiliateid}&amp;zoneid={zoneid}">Zone History Graph</menu>
+                <menu index="apsg-zone-campaign" insertafter="1.2.2.1" link="plugins/apStatsGraphsUI/index.php?entity=zone-campaign&amp;affiliateid={affiliateid}&amp;zoneid={zoneid}&amp;campaignid={campaignid}">zone-campaign History Graph</menu>
+                <menu index="apsg-zone-banner" insertafter="1.2.2.2" link="plugins/apStatsGraphsUI/index.php?entity=zone-banner&amp;affiliateid={affiliateid}&amp;zoneid={zoneid}&amp;campaignid={campaignid}&amp;bannerid={bannerid}">zone-banner History Graph</menu>
+                <menu index="apsg-affiliate-campaign" insertafter="1.3.1" link="plugins/apStatsGraphsUI/index.php?entity=affiliate-campaign&amp;affiliateid={affiliateid}&amp;campaignid={campaignid}">affiliate-campaign History Graph</menu>
+                <menu index="apsg-affiliate-banner" insertafter="1.3.2" link="plugins/apStatsGraphsUI/index.php?entity=affiliate-banner&amp;affiliateid={affiliateid}&amp;campaignid={campaignid}&amp;bannerid={bannerid}">affiliate-banner History Graph</menu>
+            </trafficker>
+        </navigation>
+        <components>
+             <component>
+                 <name>apStatsGraphsUI</name>
+             </component>
+        </components>
+    </install>
+</plugin>

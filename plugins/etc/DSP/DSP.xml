@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<?xml-stylesheet type="text/xsl" href=""?>
+
+<plugin>
+    <name>DSP</name>
+    <creationDate>2014-08-16</creationDate>
+    <author>Dreamajax Technologies Pvt Ltd</author>
+    <authorEmail>info@dreamajax.com</authorEmail>
+    <authorUrl>http://www.dreamajax.com</authorUrl>
+    <license>GNU General Public License</license>
+    <description>dsp</description>
+    <version>1.0.0</version>
+  
+   <install>
+        <files>
+
+   		<file path="{ADMINPATH}/">dsp.php</file>
+   		<file path="{ADMINPATH}/">dsp_request.php</file>
+   		<file path="{ADMINPATH}/">oxm_dsp.php</file>
+
+   		<file path="{ADMINPATH}/">oxm_dsp_action.php</file>
+		<file path="{ADMINPATH}/">oxm_dspday_export.php</file>
+		<file path="{ADMINPATH}/">oxm_dspdaystat.php</file>
+		<file path="{ADMINPATH}/">oxm_dsp_edit.php</file>
+
+   		<file path="{ADMINPATH}/">oxm_dspexport.php</file>
+		<file path="{ADMINPATH}/">oxm_dsp_index.php</file>
+		<file path="{ADMINPATH}/">oxm_dsp_list.php</file>
+		<file path="{ADMINPATH}/">winnotice.php</file>
+	
+		<file path="{ADMINPATH}/images/">add-journal-submit.gif</file>
+		<file path="{ADMINPATH}/images/">adxactive.png</file>
+		<file path="{ADMINPATH}/images/">adxdeactive.png</file>
+		<file path="{ADMINPATH}/images/">b-mboxbottom.gif</file>
+		<file path="{ADMINPATH}/images/">browesefull.gif</file>
+
+		<file path="{ADMINPATH}/assets/images/">icon-calendar.gif</file>
+		
+		<file path="{ADMINPATH}/assets/images/ltr/">go_blue.gif</file>
+					      
+       
+        </files>
+
+<schema>
+		
+        <mdb2schema>tables_DSP</mdb2schema>
+       <dboschema>db_schema</dboschema>
+       <dbolinks>db_schema.links</dbolinks>
+       		<dataobject>Dj_dsp.php</dataobject>
+		<dataobject>Dj_dsp_bid_request.php</dataobject>
+		<dataobject>Dj_dsp_response.php</dataobject>
+		<dataobject>Dj_dsp_win_notice.php</dataobject>
+</schema>
+
+<navigation>
+	  
+	<admin>
+		
+		<menu add="dsp-index" index="dsp-index" link="plugins/DSP/oxm_dsp_index.php">DSP Portal</menu>
+		<menu addto="dsp-index" index="dsp-add" link="plugins/DSP/oxm_dsp_index.php">Add DSP Portal</menu>
+		<menu addto="dsp-index" index="dsp-list" link="plugins/DSP/oxm_dsp_list.php">Listing DSP Portal</menu>
+
+		<menu add="dsp-stat" index="dsp-stat" link="plugins/DSP/oxm_dsp.php">DSP Statisitcs</menu>
+		<menu addto="dsp-stat" index="dsp-statistics" link="plugins/DSP/oxm_dsp.php">DSP Statistics</menu>
+	
+	</admin>
+      
+	<manager>
+		<menu add="dsp-stat" index="dsp-stat" link="plugins/DSP/oxm_dsp.php">DSP Statisitcs</menu>
+		<menu addto="dsp-stat" index="dsp-statistics" link="plugins/DSP/oxm_dsp.php">DSP Statistics</menu>
+		
+	</manager>
+
+	</navigation> 
+        </install>
+</plugin>

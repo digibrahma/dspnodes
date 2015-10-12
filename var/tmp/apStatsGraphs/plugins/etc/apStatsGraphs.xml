@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<?xml-stylesheet type="text/xsl" href=""?>
+
+<plugin>
+    <name>apStatsGraphs</name>
+    <creationDate>2014-03-13</creationDate>
+    <author>AdserverPlugins.com</author>
+    <authorEmail>info@adserverplugins.com</authorEmail>
+    <authorUrl>http://www.adserverplugins.com/openx/free-plugins-for-openx-ad-server/statistics-as-graphs/</authorUrl>
+    <license><![CDATA[
+        <a href="http://creativecommons.org/licenses/by-nd/3.0/">Creative Commons Attribution-No Derivative Works 3.0 Unported</a>
+    ]]></license>
+    <description>Display OpenX statistics as graphs - Free Version</description>
+    <version>1.0.5</version>
+    <oxversion>2.8.0</oxversion>
+    <type>extension</type>
+    <install>
+
+        <files>
+            <file path="{PLUGINPATH}">apStatsGraphs.readme.txt</file>
+        </files>
+
+        <contents>
+            <group name="apStatsGraphsUI">1</group>
+        </contents>
+
+    </install>
+    <readme>
+    </readme>
+</plugin>

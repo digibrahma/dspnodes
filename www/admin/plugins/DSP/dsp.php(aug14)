@@ -1,0 +1,732 @@
+<?php
+
+require_once '../../../../init.php';
+
+$con = mysql_connect($GLOBALS['_MAX']['CONF']['database']['host'],$GLOBALS['_MAX']['CONF']['database']['username'],$GLOBALS['_MAX']['CONF']['database']['password']);
+mysql_select_db($GLOBALS['_MAX']['CONF']['database']['name'], $con);
+$table_prefix = $GLOBALS['_MAX']['CONF']['table']['prefix'];
+
+/*START- Fetch the ads from our adserver based on bid request data*/
+
+/*Limitaions:
+
+Campaign should be mobile campaign
+
+Pricing model should be CPM
+
+Bid request width/height matched with ad width/height
+
+Bid floor < ad bid rate
+
+
+*/
+
+function djax_getAd($adid)
+{
+		$portal=$_REQUEST['dsp'];
+		
+		$fetch_dsp=mysql_fetch_assoc(mysql_query("select * from rv_dj_dsp where dsp_portal_name='".$portal."' and  status='1'"));
+		
+		//$cc=" ".$fetch_dsp['id']." IN(c.dsp_portals)";
+		
+		$cc="(case when c.dsp_portals!='' then ".$fetch_dsp['id']." IN(c.dsp_portals) ELSE ".$fetch_dsp['id']." NOT IN(c.dsp_portals) end)";
+
+		$bid_floor=$GLOBALS['_MAX']['CONF']['request_info']['imp'][0]['bidfloor'];
+		$width=	$GLOBALS['_MAX']['CONF']['request_info']['imp'][0]['banner']['w'];
+		$height=$GLOBALS['_MAX']['CONF']['request_info']['imp'][0]['banner']['h'];
+
+		$txt_bannertype=$GLOBALS['_MAX']['CONF']['request_info']['imp'][0]['banner']['mimes'];
+
+
+		if(in_array('text/plain',$txt_bannertype) && empty($width) && empty($height))
+		{
+			$width=0;
+			$height=0;
+			$cond=" AND d.storagetype='txt'";
+		}
+		
+		
+		elseif(in_array('image/gif',$txt_bannertype) || in_array('image/jpeg',$txt_bannertype) || in_array('image/png',$txt_bannertype))
+		{		
+			$cond=" AND d.storagetype='web'";
+				
+		}
+		else
+		{
+
+			$cond=" AND d.storagetype='javascript'";
+
+		}
+		
+		if(!empty($adid))
+		{
+	
+			$adcond="d.campaignid=".$adid." AND";
+		}
+		else
+		{
+			$adcond='';
+		}
+		
+
+		$aRows['lAds'] = array();
+		$aRows['bannerlimit'] = array();
+		$aRows['weight'] = array();
+		$aRows['bidrate'] = array();
+	
+		$tableprefix = $GLOBALS['_MAX']['CONF']['table']['prefix'];
+
+		$aRows['count_active'] = 0;
+
+			$query = "SELECT
+			d.bannerid AS ad_id,
+			d.campaignid AS placement_id,
+			d.status AS status,
+			d.description AS name,
+			d.storagetype AS type,
+			d.contenttype AS contenttype,
+			d.pluginversion AS pluginversion,
+			d.filename AS filename,
+			d.imageurl AS imageurl,
+			d.htmltemplate AS htmltemplate,
+			d.htmlcache AS htmlcache,
+			d.width AS width,
+			d.height AS height,
+			d.weight AS weight,
+			d.seq AS seq,
+			d.target AS target,
+			d.url AS url,
+			d.alt AS alt,
+			d.statustext AS statustext,
+			d.bannertext AS bannertext,
+			d.adserver AS adserver,
+			d.block AS block_ad,
+			d.capping AS cap_ad,
+			d.session_capping AS session_cap_ad,
+			d.compiledlimitation AS compiledlimitation,
+			d.acl_plugins AS acl_plugins,
+			d.prepend AS prepend,
+			d.append AS append,
+			d.bannertype AS bannertype,
+			d.alt_filename AS alt_filename,
+			d.alt_imageurl AS alt_imageurl,
+			d.alt_contenttype AS alt_contenttype,
+			d.parameters AS parameters,
+			d.transparent AS transparent,
+			d.ext_bannertype AS ext_bannertype,
+			c.campaignid AS campaign_id,
+			c.block AS block_campaign,
+			c.capping AS cap_campaign,
+			c.revenue as revenue,
+			c.session_capping AS session_cap_campaign,
+			c.show_capped_no_cookie AS show_capped_no_cookie,
+			m.clientid AS client_id,
+			c.clickwindow AS clickwindow,
+			c.weight AS campaign_weight,
+			c.viewwindow AS viewwindow,
+			m.advertiser_limitation AS advertiser_limitation,
+			m.agencyid AS agency_id
+		    FROM
+			{$tableprefix}banners AS d,
+			{$tableprefix}campaigns AS c,
+			{$tableprefix}clients AS m
+		    WHERE
+			$adcond
+			c.revenue_type=1 
+			AND
+			d.campaignid = c.campaignid
+			AND
+			m.clientid = c.clientid
+			AND
+			c.status=0
+			AND 
+			d.status=0
+			AND 
+			d.width='".$width."'
+			AND 
+			d.height='".$height."'
+			$cond AND $cc
+		    ";
+
+
+
+		$rAd = mysql_query($query);
+
+		while($aAd = mysql_fetch_array($rAd))
+		{
+
+				
+		$djax_bid=$aAd['revenue']/1000;
+
+
+		if($bid_floor<=$djax_bid)
+		{
+				if($djax_bid>=0.01 && $djax_bid<=1)
+		{
+					$aRows['lAds'][$aAd['ad_id']] = $aAd;
+
+					if($aAd['compiledlimitation'])
+					{
+					$aRows['bannerlimit'][$aAd['ad_id']]=$aAd['compiledlimitation'];
+					}
+					$aRows['weight'][$aAd['placement_id']]=$aAd['campaign_weight'];
+			
+					$aRows['bidrate'][$aAd['placement_id']]=$aAd['revenue']/1000;
+
+					$aRows['count_active']++;
+			}
+			}
+		}
+
+
+
+		return $aRows;
+}
+
+/*START- Fetch the ads from our adserver based on bid request data*/
+
+/*START- Process of DSP data return*/
+
+function dsp_adprocessing($requestparams)
+{
+	$table_prefix = $GLOBALS['_MAX']['CONF']['table']['prefix'];
+
+	$limitedcampaigns=array();
+
+	$banner=array();
+
+ 	$request=array();
+
+	$adid='';
+
+	$request_array=unserialize($requestparams);
+
+	$GLOBALS['_MAX']['CONF']['request_info']=$request_array;
+
+	$djax_allads=djax_getAd($adid);
+
+	$deliverypath=$GLOBALS['_MAX']['CONF']['webpath']['delivery'];
+
+	$imagepath=$GLOBALS['_MAX']['CONF']['webpath']['images'];
+
+
+	if(count($djax_allads['bannerlimit'])>0)
+	{
+		$limitedcampaigns=_adSelectCheckCriteria($djax_allads['bannerlimit']);
+	}
+	else
+	{
+		$limitedcampaigns='true';
+	}
+
+	if(count($djax_allads['lAds'])>0)
+	{
+
+		$txt_bannertype=$GLOBALS['_MAX']['CONF']['request_info']['imp'][0]['banner']['mimes'];
+		$top_campaign_ads=djax_adselect($djax_allads,$limitedcampaigns);
+		$width=	$GLOBALS['_MAX']['CONF']['request_info']['imp'][0]['banner']['w'];
+		$height=$GLOBALS['_MAX']['CONF']['request_info']['imp'][0]['banner']['h'];
+		
+		
+		shuffle($top_campaign_ads);
+		$getallads=djax_getAd($top_campaign_ads[0]);
+		
+		$tempresults=$getallads['lAds'];
+		$bannerid=array_rand($tempresults,1);
+		$results=$tempresults[$bannerid];
+		
+
+	
+		if(in_array('text/plain',$txt_bannertype) && empty($width) && empty($height) )
+		{
+			$adtype='txt';
+		}
+		else
+		{
+			$adtype='web';
+
+		}
+
+		$adminpath=$GLOBALS['_MAX']['CONF']['webpath']['admin'];
+
+		$clickurl='http://'.$deliverypath."/ck.php?oaparams=2__bannerid=".$results['ad_id']."__zoneid=0__cb={random}__oadest=".$results['url'];
+
+		$beaconurl='http://'.$deliverypath."/lg.php?bannerid=".$results['ad_id']."&amp;campaignid=".$results['placement_id']."&amp;zoneid=0&amp;cb={random}";
+
+		$imageurl='http://'.$imagepath."/".$results['filename'];			
+
+		$bidrate=$results['revenue']/1000;
+
+		$cur_date 		= 	date('Y-m-d H:i:s');
+			
+				$request_query 	= 	mysql_query("SELECT id FROM {$table_prefix}dj_dsp_bid_request WHERE bid_request_id='".$request_array['id']."' AND datetime='".$cur_date."' ");
+				$request_row 	= 	mysql_fetch_assoc($request_query);
+				$requset_id 	= 	$request_row['id'];
+				mysql_query("INSERT INTO  
+								`{$table_prefix}dj_dsp_response` (
+									`datetime`,
+									`requset_id`,
+									`id` ,
+									`imp_id` ,
+									`imp_width` ,
+									`imp_height` ,
+									`seat` ,
+									`floor_price` ,
+									`advertiser_bid_price` ,
+									`smaato_bid_price` ,
+									`admin_rev` ,
+									`adid` ,
+									`bannerid` ,
+									`campaign_id` ,
+									`type`
+								)
+								VALUES (
+									 '".$cur_date."',
+									 '".$requset_id."',
+									 '".$request_array['id']."',
+									 '".$request_array['imp'][0]['id']."', 
+									 '".$results['width']."', 
+									 '".$results['height']."', 
+									 '8a809449012f2f0744180791edfc0003', 
+									 '".$GLOBALS['_MAX']['CONF']['request_info']['imp'][0]['bidfloor']."', 
+									 '".$bidrate."',
+									 '0',
+									 '0', 
+									 '".$results['ad_id']."', 
+									 '".$results['ad_id']."', 
+									 '".$results['placement_id']."', 
+									 '".$request_array['device']['devicetype']."'
+								)");
+			
+
+		$response_array= array(
+			"id"=>$request_array['id'],
+			"bid"=>"368986290101875502942021904441292",
+			"impid"=>$request_array['imp'][0]['id'],
+			"price"=>$bidrate,
+			"adid"=>$results['ad_id'],
+			"nurl"=> 'http://'.$adminpath.'/plugins/DSP/winnotice.php?auctionId=${AUCTION_ID}&bidid=${AUCTION_BID_ID}&price=${AUCTION_PRICE}&impid=${AUCTION_IMP_ID}&seatid=${AUCTION_SEAT_ID}&adid=${AUCTION_AD_ID}&cur=${AUCTION_CURRENCY}',
+			"click_url"=>$clickurl,
+			"image_url"=>$imageurl,
+			"additional_text"=>$results['bannertext'],
+			"beacon_url"=>$beaconurl,
+			"adomain"=>$_SERVER['HTTP_HOST'],
+			"iurl"=>"",
+			"cid"=>$results['placement_id'],
+			"crid"=>$results['ad_id'],
+			"attr"=>"",
+			"ext"=>"",
+			"tooltip"=>"",
+			"seat"=>"8a809449012f2f0744180791edfc0003",
+			"group"=>0,
+			"bidid"=>$request_array['id'],
+			"cur"=>"USD",
+			"customdata"=>"",
+			"ext"=>"",
+			"width"=>$results['width'],
+			"height"=>$results['height'],
+			"adtype"=>$adtype
+		);
+	}
+
+
+return $response_array;
+
+}
+
+/*END- Process of DSP data return*/
+
+/*START - DSP AD SELECT ALGORITHM*/
+
+function  djax_adselect($djax_allads,$limitedcampaigns)
+{
+	$top_campaign=array();
+
+	$max_bid = 0;
+
+	$chk_campaign_weight=array();
+
+	$djax_campaign_bid=array();
+
+	$chk_campaign_weight=array_values($djax_allads['weight']);
+
+	$djax_campaign_weight=$djax_allads['weight'];
+
+	$djax_campaign_bid=$djax_allads['bidrate'];
+
+
+	if(count(array_unique($chk_campaign_weight)) === 1)
+	{
+				foreach ($djax_campaign_bid as $key => $bid)
+				{
+					if($limitedcampaigns=='true')
+					{
+							if ($bid < $max_bid) 
+							{
+								continue;
+							}
+							elseif ($bid > $max_bid)
+							{
+								$top_campaign = array();
+								$max_bid = $bid;
+							}
+							$top_campaign[]=$key;
+					
+						/*Higesht bid Banner*/
+					}
+					else if($limitedcampaigns[$key]==1 || count($limitedcampaigns[$key])==0)
+					{
+
+							if ($bid < $max_bid) 
+							{
+								continue;
+							}
+							elseif ($bid > $max_bid)
+							{
+								$top_campaign = array();
+								$max_bid = $bid;
+							}
+							$top_campaign[]=$key;
+					
+						/*Higesht bid Banner*/
+					}
+				}
+
+	}
+	else
+	{
+			arsort($chk_campaign_weight);
+
+			$maxValue = max($chk_campaign_weight);
+
+			$maxIndex = array_search(max($chk_campaign_weight),$chk_campaign_weight);
+
+			foreach ($djax_campaign_weight as $key => $weight)
+			{
+					if($limitedcampaigns=='true')
+					{
+						if($weight==$maxValue)
+						{
+								$bid=$djax_campaign_bid[$key];
+
+								if ($bid < $max_bid) 
+								{
+									continue;
+								}
+								elseif ($bid > $max_bid)
+								{
+									$top_campaign = array();
+									$max_bid = $bid;
+								}
+								$top_campaign[]=$key;
+				
+								/*Higesht bid Campaign*/
+				
+						}
+					}
+					else if($limitedcampaigns[$key]==1 || count($limitedcampaigns[$key])==0)
+					{
+						if($weight==$maxValue)
+						{
+								$bid=$djax_campaign_bid[$key];
+
+								if ($bid < $max_bid) 
+								{
+									continue;
+								}
+								elseif ($bid > $max_bid)
+								{
+									$top_campaign = array();
+									$max_bid = $bid;
+								}
+								$top_campaign[]=$key;
+				
+								/*Higesht bid Campaign*/
+				
+						}
+					}
+			
+			}
+
+	}
+
+return $top_campaign;
+
+}
+
+/*START - DSP AD SELECT ALGORITHM*/
+
+/*START- Country Targeting*/
+
+function country($limitation, $op)
+{
+    return MAX_limitationsMatchArrayClientGeo('country_code', $limitation, $op);
+}
+
+function profile($limitation, $op)
+{
+    return true;
+}
+
+/*END- Country Targeting*/
+
+function MAX_limitationsMatchArrayClientGeo($paramName, $limitation, $op, &$aParams = array())
+{
+$paramName=$GLOBALS['_MAX']['CONF']['request_info']['device']['geo']['country'];
+$fetchrows=mysql_fetch_array(mysql_query("SELECT * FROM `rv_dj_country` where iso_countycode_alpha3='$paramName'"));
+    return MAX_limitationsMatchArrayValue($fetchrows['country_code'], $limitation, $op);
+}
+
+/*START- Filter campaign ads based bid request limitaions*/
+
+function _adSelectCheckCriteria($ads)
+{
+	$djax_response=array();
+
+		$portal=$_REQUEST['dsp'];
+		
+		$fetch_dsp=mysql_fetch_assoc(mysql_query("select * from rv_dj_dsp where dsp_portal_name='".$portal."' and  status='1'"));
+		
+		$cc=" ".$fetch_dsp['id']." IN(c.dsp_portals)";
+
+	foreach($ads as $key => $value)
+	{
+		if(!empty($value))
+		{
+			@eval('$result = (' . $value . ');');
+
+			if(empty($result))
+			{
+				$result=0;
+			}
+
+			$djax_response[$key]=$result;
+		}
+		else
+		{
+			$djax_response[$key]=1;
+		}
+		
+	}
+	
+	foreach($ads as $key => $value)
+	{
+		
+		
+		
+		
+		
+	}
+	
+	
+	
+return $djax_response;
+
+}
+/*END- Filter campaign ads based bid request limitaions*/
+
+/*START - Mobile device limiations*/
+
+/*Mobile OS Targeting*/
+
+function teleco($limitation, $op)
+{
+return true;
+}
+function os($limitation, $op)
+{
+	return MAX_limitationsMatchArraydevices('device_os', $limitation, $op,$GLOBALS['_MAX']['CONF']['request_info']['device']['os']);
+}
+/*Mobile Model Targeting*/
+
+function model($limitation, $op)
+{
+	return MAX_limitationsMatchArraydevices('device_model', $limitation, $op,$GLOBALS['_MAX']['CONF']['request_info']['device']['model']);
+}
+/*Mobile Brand Targeting*/
+
+function handset($limitation, $op, $aParams = array())
+{
+	return MAX_limitationsMatchArraydevices('device_brand', $limitation, $op,$GLOBALS['_MAX']['CONF']['request_info']['device']['make']);
+}
+/*END - Mobile device limiations*/
+
+function MAX_limitationsMatchArrayValue($value, $limitation, $op)
+{
+    	if ($op == '==')
+	{
+        	return strcasecmp($limitation, $value) == 0;
+    	}
+	else if ($op == '=~')
+	{
+		if ($value == '')
+		{
+		    return true;
+		}
+		return stripos(','.$limitation.',', ','.$value.',') !== false;
+    	}
+	else if ($op == '=x')
+	{
+		if ($value == '')
+		{
+		    return true;
+		}
+		return stripos(','.$limitation.',', ','.$value.',') !== false;
+    	}
+	else
+	{
+		if ($value == '')
+		{
+		    return false;
+		}
+		return stripos(','.$limitation.',', ','.$value.',') === false;
+    	}
+}
+
+
+function MAX_limitationsMatchArraydevices($paramName, $limitation, $op,$value)
+{
+	$value = !empty($value)?$value:'';
+
+	if(empty($value))
+	{
+		return true;
+	}
+	else
+	{
+		return  MAX_limitationsMatchArrayValue($value, $limitation, $op);
+	}
+}
+
+/*START - GEO Lattitude/Longitude Limitations*/
+
+function MAX_checkGeo_Latlong($limitation, $op, $aParams = array())
+{
+    	$latitude=$GLOBALS['_MAX']['CONF']['request_info']['device']['geo']['lat'];
+
+    	$longitude=$GLOBALS['_MAX']['CONF']['request_info']['device']['geo']['lon'];
+	
+    	if($latitude && $longitude)
+	{
+		$aRegion = MAX_geoReplaceEmptyWithZero(MAX_limitationsGetAFromS($limitation));
+
+		$result = MAX_geoIsPlaceInRegion($latitude,$longitude, $aRegion);
+		if ($op == '==')
+		{
+		    return $result;
+		}
+		else
+		{
+		    return !$result;
+		}
+    	}
+	else
+	{
+        	return ($op != '==');
+    	}
+}
+/*END - GEO Lattitude/Longitude Limitations*/
+
+function MAX_geoReplaceEmptyWithZero($aRegion)
+{
+    	for ($i = 0; $i < count($aRegion); $i++)
+	{
+		if ($aRegion[$i] == '')
+		{
+		    $aRegion[$i] = '0.0000';
+		}
+    	}
+
+    return $aRegion;
+}
+
+function MAX_limitationsGetAFromS($sString)
+{
+    return strlen($sString) ? explode(',', $sString) : array();
+}
+
+function MAX_geoIsPlaceInRegion($lattitude, $longitude, $region)
+{
+    $lattitudeSouth = $region[0];
+    $lattitudeNorth = $region[1];
+    $longitudeWest = $region[2];
+    $longitudeEast = $region[3];
+
+    return $lattitude >= $lattitudeSouth
+        && $lattitude <= $lattitudeNorth
+        && $longitude >= $longitudeWest
+        && $longitude <= $longitudeEast;
+}
+
+/*START - GEO Mobile carrier Limitaions*/
+
+function MAX_checkMobile_mobileCarrierLimitation($limitation, $op, $aParams = array())
+{
+			$table_prefix = $GLOBALS['_MAX']['CONF']['table']['prefix'];
+	
+			$ip = $GLOBALS['_MAX']['CONF']['request_info']['device']['ip'];
+			
+
+			$del = OA_Dal_Delivery_query("SELECT * FROM  ".$table_prefix."dj_carrier_detail WHERE INET_ATON(start_ip) <= INET_ATON('".$ip."') AND INET_ATON(end_ip) >= INET_ATON('".$ip."')");
+
+
+			while($deli = OA_Dal_Delivery_fetchAssoc($del))
+			{
+
+			$delivery[] = $deli['country'];
+			$delivery[] = $deli['id'];
+
+			}
+
+ 			$res = explode('|',$limitation);
+
+ 
+return MAX_limitationsMatchStringValue($delivery[0], $res[0], $op) && 
+ 	MAX_limitationsMatchArrayValue($delivery[1], $res[1], $op);
+
+
+}
+/*END - GEO Mobile carrier Limitaions*/
+
+function MAX_limitationsMatchStringValue($value, $limitation, $op)
+{
+   $limitation = strtolower($limitation);
+
+   $value = strtolower($value);
+
+    	if ($op == '==')
+	{
+        	return $limitation == $value;
+    	}
+	elseif ($op == '!=')
+	{
+        	return $limitation != $value;
+    	}
+	elseif ($op == '=~')
+	{
+        	return MAX_stringContains($value, $limitation);
+    	}
+	elseif ($op == '!~')
+	{
+       	 	return !MAX_stringContains($value, $limitation);
+    	}
+	elseif ($op == '=x')
+	{
+        	return preg_match(_getSRegexpDelimited($limitation), $value);
+    	}
+	else
+	{
+       		 return !preg_match(_getSRegexpDelimited($limitation), $value);
+    	}
+}
+function _getSRegexpDelimited($sRawRegexp)
+{
+    return '#' . str_replace('#', '\\#', $sRawRegexp) . '#';
+}
+
+function MAX_stringContains($sString, $sToken)
+{
+    return strpos($sString, $sToken) !== false;
+}
+
+?>

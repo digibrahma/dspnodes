@@ -1,0 +1,789 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<?xml-stylesheet type="text/xsl" href="xsl/mdb2_schema.xsl"?>
+<database>
+
+ <name>DSP</name>
+ <create>false</create>
+ <overwrite>false</overwrite>
+ <version>001</version>
+ <status>final</status>
+
+
+<!--start first table-->
+
+<table>
+<name>dj_dsp</name>
+<declaration>
+
+ <field>
+<name>id</name>
+<type>openads_int</type>
+<length>100</length>
+<notnull>true</notnull>
+<autoincrement>1</autoincrement>
+<primary>true</primary>
+  </field>
+							   
+						  
+  <field>
+<name>dsp_portal_name</name>
+<type>openads_varchar</type>
+<length>200</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>0</default>
+  </field>
+ 
+ <field>
+<name>status</name>
+<type>openads_int</type>
+<length>100</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+   </field>
+
+<index>
+    <name>id</name>
+    <primary>true</primary>
+    <field>
+     <name>id</name>
+     <sorting>ascending</sorting>
+    </field> 
+   </index>						      	        
+
+  </declaration>
+
+ </table>
+
+<!--end first table-->
+
+<!--start second table-->
+<table>
+<name>dj_dsp_bid_request</name>
+<declaration>
+
+ <field>
+<name>id</name>
+<type>openads_int</type>
+<length>10</length>
+<notnull>true</notnull>
+<autoincrement>1</autoincrement>
+<primary>true</primary>
+  </field>
+							   
+<field>
+<name>datetime</name>
+<type>openads_timestamp</type>
+<length></length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>CURRENT_TIMESTAMP</default>
+ </field>
+							  
+  <field>
+<name>exchange_id</name>
+<type>openads_int</type>
+<length>100</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+  </field>
+ 
+ <field>
+<name>at</name>
+<type>openads_int</type>
+<length>100</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+   </field>
+
+    <field>
+<name>device_connectiontype</name>
+<type>openads_int</type>
+<length>50</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+ </field>
+
+    <field>
+<name>device_devicetype</name>
+<type>openads_int</type>
+<length>50</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+ </field>
+
+    <field>
+<name>device_geo_country</name>
+<type>openads_varchar</type>
+<length>250</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+ </field>
+
+    <field>
+<name>device_geo_latitude</name>
+<type>openads_varchar</type>
+<length>200</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+ </field>
+
+    <field>
+<name>device_geo_longitude</name>
+<type>openads_varchar</type>
+<length>200</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+ </field>
+
+    <field>
+<name>device_geo_type</name>
+<type>openads_int</type>
+<length>200</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+ </field>
+
+    <field>
+<name>device_ip</name>
+<type>openads_varchar</type>
+<length>200</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+ </field>
+
+    <field>
+<name>device_js</name>
+<type>openads_varchar</type>
+<length>200</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+ </field>
+
+    <field>
+<name>device_make</name>
+<type>openads_varchar</type>
+<length>200</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+ </field>
+
+    <field>
+<name>device_model</name>
+<type>openads_varchar</type>
+<length>200</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+ </field>
+
+    <field>
+<name>device_os</name>
+<type>openads_varchar</type>
+<length>200</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+ </field>
+
+    <field>
+<name>device_ua</name>
+<type>openads_varchar</type>
+<length>200</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+ </field>
+
+
+    <field>
+<name>ext_udi</name>
+<type>openads_int</type>
+<length>200</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+ </field>
+
+    <field>
+<name>bid_request_id</name>
+<type>openads_varchar</type>
+<length>200</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+ </field>
+
+
+    <field>
+<name>imp_banner_type</name>
+<type>openads_varchar</type>
+<length>200</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+ </field>
+
+
+    <field>
+<name>imp_banner_height</name>
+<type>openads_int</type>
+<length>200</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+ </field>
+
+
+    <field>
+<name>imp_banner_mimes</name>
+<type>openads_varchar</type>
+<length>200</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+ </field>
+
+
+    <field>
+<name>imp_banner_position</name>
+<type>openads_int</type>
+<length>200</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+ </field>
+
+
+    <field>
+<name>imp_banner_width</name>
+<type>openads_int</type>
+<length>200</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+ </field>
+
+
+<field>
+<name>imp_bidfloor</name>
+<type>openads_decimal</type>
+<length>10,4</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default></default>
+</field>
+
+    <field>
+<name>imp_displaymanager</name>
+<type>openads_varchar</type>
+<length>250</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+ </field>
+
+    <field>
+<name>imp_id</name>
+<type>openads_int</type>
+<length>50</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+ </field>
+
+    <field>
+<name>site_category</name>
+<type>openads_varchar</type>
+<length>250</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+ </field>
+
+    <field>
+<name>site_domain</name>
+<type>openads_varchar</type>
+<length>255</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+ </field>
+
+    <field>
+<name>site_id</name>
+<type>openads_int</type>
+<length>50</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+ </field>
+
+    <field>
+<name>site_name</name>
+<type>openads_varchar</type>
+<length>250</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+ </field>
+
+
+    <field>
+<name>publisher_id</name>
+<type>openads_int</type>
+<length>50</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+ </field>
+
+
+    <field>
+<name>user_gender</name>
+<type>openads_varchar</type>
+<length>250</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+ </field>
+
+
+    <field>
+<name>user_yob</name>
+<type>openads_int</type>
+<length>50</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+ </field>
+
+
+
+
+<index>
+    <name>id</name>
+    <primary>true</primary>
+    <field>
+     <name>id</name>
+     <sorting>ascending</sorting>
+    </field> 
+   </index>						      	        
+
+  </declaration>
+
+ </table>
+
+<!--end second table-->
+
+<!--start third table-->
+<table>
+<name>dj_dsp_response</name>
+<declaration>
+
+ <field>										<name>response_id</name>
+<type>openads_int</type>
+<length>10</length>
+<notnull>true</notnull>
+<autoincrement>1</autoincrement>
+<primary>true</primary>
+  </field>
+							   
+<field>
+<name>datetime</name>
+<type>openads_timestamp</type>
+<length></length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>CURRENT_TIMESTAMP</default>
+ </field>
+							  
+  <field>
+<name>requset_id</name>
+<type>openads_int</type>
+<length>100</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>0</default>
+  </field>
+ 
+ <field>
+<name>id</name>
+<type>openads_varchar</type>
+<length>100</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+   </field>
+
+    <field>
+<name>imp_id</name>
+<type>openads_int</type>
+<length>50</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+ </field>
+
+    <field>
+<name>imp_width</name>
+<type>openads_int</type>
+<length>50</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+ </field>
+
+    <field>
+<name>imp_height</name>
+<type>openads_int</type>
+<length>50</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+ </field>
+
+    <field>
+<name>seat</name>
+<type>openads_varchar</type>
+<length>100</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+ </field>
+
+    <field>
+<name>floor_price</name>
+<type>openads_float</type>
+<length></length>
+<notnull></notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+ </field>
+
+    <field>
+<name>advertiser_bid_price</name>
+<type>openads_float</type>
+<length></length>
+<notnull></notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+ </field>
+
+    <field>
+<name>smaato_bid_price</name>
+<type>openads_float</type>
+<length></length>
+<notnull></notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+ </field>
+
+<field>
+<name>admin_rev</name>
+<type>openads_decimal</type>
+<length>10,2</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default></default>
+</field>
+
+    <field>
+<name>adid</name>
+<type>openads_int</type>
+<length>50</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>0</default>
+ </field>
+
+    <field>
+<name>bannerid</name>
+<type>openads_int</type>
+<length>50</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>0</default>
+ </field>
+
+    <field>
+<name>campaign_id</name>
+<type>openads_int</type>
+<length>50</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>0</default>
+ </field>
+
+    <field>
+<name>type</name>
+<type>openads_varchar</type>
+<length>255</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+ </field>
+
+    <field>
+<name>win_notice</name>
+<type>openads_int</type>
+<length>50</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+ </field>
+
+
+<index>
+    <name>response_id</name>
+    <primary>true</primary>
+    <field>
+     <name>response_id</name>
+     <sorting>ascending</sorting>
+    </field> 
+   </index>						      	        
+
+  </declaration>
+
+ </table>
+
+<!--end third table-->
+
+<!--start first table-->
+
+<table>
+<name>dj_dsp_win_notice</name>
+<declaration>
+
+ <field>
+<name>id</name>
+<type>openads_int</type>
+<length>100</length>
+<notnull>true</notnull>
+<autoincrement>1</autoincrement>
+<primary>true</primary>
+  </field>
+							   
+						  
+  <field>
+<name>dsp_portal_name</name>
+<type>openads_varchar</type>
+<length>200</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>0</default>
+  </field>
+ 
+ <field>
+<name>status</name>
+<type>openads_int</type>
+<length>100</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+   </field>
+
+<index>
+    <name>id</name>
+    <primary>true</primary>
+    <field>
+     <name>id</name>
+     <sorting>ascending</sorting>
+    </field> 
+   </index>						      	        
+
+  </declaration>
+
+ </table>
+
+<!--end first table-->
+
+
+<!--start fourth table-->
+
+<table>
+<name>dj_dsp_win_notice</name>
+<declaration>
+
+ <field>
+<name>id</name>
+<type>openads_int</type>
+<length>100</length>
+<notnull>true</notnull>
+<autoincrement>1</autoincrement>
+<primary>true</primary>
+  </field>
+	
+<field>
+<name>datetime</name>
+<type>openads_timestamp</type>
+<length></length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>CURRENT_TIMESTAMP</default>
+ </field>
+							  
+  <field>
+<name>auctionID</name>
+<type>openads_varchar</type>
+<length>300</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+  </field>
+
+  <field>
+<name>request_id</name>
+<type>openads_int</type>
+<length>100</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+  </field>
+
+  <field>
+<name>bidid</name>
+<type>openads_varchar</type>
+<length>300</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+  </field>
+
+<field>
+<name>price</name>
+<type>openads_double</type>
+<length></length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default></default>
+</field>
+
+  <field>
+<name>currency</name>
+<type>openads_varchar</type>
+<length>300</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+  </field>
+
+  <field>
+<name>impid</name>
+<type>openads_varchar</type>
+<length>300</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+  </field>
+
+  <field>
+<name>seatid</name>
+<type>openads_varchar</type>
+<length>300</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+  </field>
+
+  <field>
+<name>adid</name>
+<type>openads_varchar</type>
+<length>300</length>
+<notnull>true</notnull>
+<autoincrement></autoincrement>
+<primary></primary>
+<default>NULL</default>
+  </field>
+
+  
+<index>
+    <name>id</name>
+    <primary>true</primary>
+    <field>
+     <name>id</name>
+     <sorting>ascending</sorting>
+    </field> 
+   </index>						      	        
+
+  </declaration>
+
+ </table>
+<!--end fourth table-->
+
+
+
+</database>
+

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<?xml-stylesheet type="text/xsl" href=""?>
+<plugin>
+    <name>DSP</name>
+    <creationDate>2014-08-16</creationDate>
+    <author>Dreamajax Technologies Pvt.Ltd</author>
+    <authorEmail>info@dreamajax.com</authorEmail>	
+    <authorUrl>http://www.dreamajax.com</authorUrl>
+    <license>license.txt</license>
+    <description>dsp  Plugin( Developed by: Dreamajax Technologies Pvt.Ltd)</description>
+    <version>1.0.0 </version>
+    <type>package</type>
+    <install>
+    <contents>
+              
+   		<group name="DSP">1</group>
+   		
+        </contents>
+    </install>
+
+</plugin>

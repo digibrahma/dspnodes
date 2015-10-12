@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<?xml-stylesheet type="text/xsl" href=""?>
+
+<plugin>
+    <name>MobileCarrierSelection</name>
+    <creationDate>2011-06-17</creationDate>
+    <author>openxservices.com</author>
+    <authorEmail>info@openxservices.com</authorEmail>
+    <authorUrl>http://www.openxservices.com</authorUrl>
+    <license>GPL</license>
+    <description>Mobile Carrier Selection Module  For OpenX</description>
+    <version>1.0.2-dev</version>
+    <oxversion>2.7.30-beta-rc11</oxversion>
+    <extends>MobileCarrierPlugin</extends>
+    <install>
+
+        <files>
+            <file path="{ADMINPATH}/">.htaccess</file>
+           	 <file path="{ADMINPATH}/">carrier-upload.php</file>
+           	 <file path="{ADMINPATH}/">exel.php</file>           	 
+             <file path="{ADMINPATH}/">carrier-detail.php</file>  
+	    <file path="{ADMINPATH}/">carrier-edit.php</file>  
+             <file path="{ADMINPATH}/">carrier-delete.php</file> 
+                                                                         
+             <file path="{ADMINPATH}/images/">browesefull.gif</file> 
+             <file path="{ADMINPATH}/images/">b-mboxbottom.gif</file>     
+             <file path="{ADMINPATH}/images/">add-journal-submit.gif</file> 
+             
+              <file path="{ADMINPATH}/css/">upload-media.css</file>             
+
+        </files>
+
+          <navigation>
+
+
+            <admin>
+
+                <menu add="IpCarrier-menu"   link="plugins/MobileCarrierSelection/carrier-upload.php">Mobile IP Carrier</menu>
+
+                <menu addto="IpCarrier-menu" index="carrierupload" link="plugins/MobileCarrierSelection/carrier-upload.php">Mobile Carrier  Upload</menu>
+                <menu addto="IpCarrier-menu" index="carrierdetail" link="plugins/MobileCarrierSelection/carrier-detail.php">Mobile Carrier Details</menu>
+            </admin>
+
+        </navigation>
+
+
+
+       <schema>
+
+            <mdb2schema>tables_MobileCarrierSelection</mdb2schema>
+
+            <dboschema>db_schema</dboschema>
+
+            <dbolinks>db_schema.links</dbolinks>
+            <dataobject>Carrier_detail.php</dataobject>
+            <dataobject>Excel.php</dataobject>          
+        </schema>
+
+
+
+
+
+        <!-- optional custom event scripts -->
+
+        <!-- prescript>prescript_install_BillingModule.php</prescript -->
+
+        <!-- postscript>postscript_install_BillingModule.php</postscript -->
+
+
+
+    </install>
+
+
+
+</plugin>
+

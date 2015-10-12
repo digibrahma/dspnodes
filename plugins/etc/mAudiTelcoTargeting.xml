@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<?xml-stylesheet type="text/xsl" href=""?>
+
+<plugin>
+    <name>mAudiTelcoTargeting</name>
+    <creationDate>2011-06-17</creationDate>
+    <author>openxservices.com</author>
+    <authorEmail>info@openxservices.com</authorEmail>
+    <authorUrl>http://www.openxservices.com</authorUrl>
+    <license>GPL</license>
+    <description>mAudi Telco Targeting Plugin  For OpenX</description>
+    <version>1.0.0-dev</version>
+    <oxversion>2.7.30-beta-rc11</oxversion>
+    <type>extension</type>
+
+    <install>
+
+        <files>
+
+            <!-- The contents of this file is displayed on the plugin details screen -->
+            <file path="{PLUGINPATH}">mAudiTelcoTargeting.readme.txt</file>
+
+            <!-- The contents of this file is displayed when uninstalling a plugin -->
+            <file path="{PLUGINPATH}">mAudiTelcoTargeting.uninstall.txt</file>
+        </files>
+
+        <contents>
+                        <group name="MobileCarrierSelection">1</group>
+                        <group name="mobileCarrierLimitation">2</group>
+
+        </contents>
+
+    </install>
+
+</plugin>

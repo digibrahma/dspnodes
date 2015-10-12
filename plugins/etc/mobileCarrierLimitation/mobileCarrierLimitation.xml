@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<?xml-stylesheet type="text/xsl" href=""?>
+
+<plugin>
+    <name>mobileCarrierLimitation</name>
+    <creationDate>2011-06-17</creationDate>
+    <author>openxservices.com</author>
+    <authorEmail>info@openxservices.com</authorEmail>
+    <authorUrl>http://www.openxservices.com</authorUrl>
+    <license>GPL</license>
+    <description>Mobile IP Carrier Limitation for OpenX</description>
+    <version>1.0.0</version>
+    <oxversion>2.7.30-beta-rc11</oxversion>
+    <extends>deliveryLimitations</extends>
+
+    <install>
+        <files>
+            <file path="{MODULEPATH}deliveryLimitations/mobileCarrierLimitation/">mobileCarrierLimitation.class.php</file>
+            <file path="{MODULEPATH}deliveryLimitations/mobileCarrierLimitation/">mobileCarrierLimitation.delivery.php</file>
+            <file path="{MODULEPATH}deliveryLimitations/mobileCarrierLimitation/">mobileCarrierLimitation.res.inc.php</file>
+            <file path="{GROUPPATH}/_lang/">en.mo</file>
+            <file path="{GROUPPATH}/_lang/po/">en.po</file>
+        </files>
+    </install>
+
+</plugin>

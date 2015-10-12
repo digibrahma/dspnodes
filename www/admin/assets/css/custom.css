@@ -1,0 +1,17 @@
+
+body,table,td,select,textarea,input,button, a, a:active, a:visited, a:link, body, table, td, select, textarea, input, button, pre.invocation-codes, textarea.code, textarea.code-gray, .calendar, .calendar table, select.switcher
+optgroup  {
+  font-family: 'Ubuntu', sans-serif;
+}
+
+#secondLevelNavigation .navigation li.active ul li.active a, a, #thirdLevelTools a.buttonLink span, #oaNavigationExtra a {
+  color: #FF217E;
+}
+
+#secondLevelNavigation .navigation li.active a {
+  background-color: #FF217E;
+  
+}
+
+
+
