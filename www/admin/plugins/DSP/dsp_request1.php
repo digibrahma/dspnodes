@@ -80,14 +80,14 @@ else
           1,
           3
         ],
-        "h":50,
+        "h":20,
         "mimes":[
           "image/gif",
           "image/jpeg",
           "image/png",
           "text/plain"
         ],
-        "w":320
+        "w":120
       },
       "displaymanager":"SOMA",
       "id":"1",

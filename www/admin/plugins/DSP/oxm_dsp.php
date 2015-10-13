@@ -246,7 +246,7 @@ $date[]=$end;
  $agency_id = OA_Permission::getEntityId();
  
  	if($clientid)
-	{
+	{ //echo 'Test 1'; exit;
 			$conf 		= 	$GLOBALS['_MAX']['CONF']['database'];
 			$host		=	$conf['host'];
 			$db			=	$conf['name'];	
@@ -278,7 +278,7 @@ $date[]=$end;
 										ORDER BY DATE(req.datetime) DESC");
 	}
 	else
-	{	
+	{	 
 		// admin Stat
 		if($agency_id==0)
 		{
@@ -319,7 +319,9 @@ $date[]=$end;
 		
 		else
 		{
-
+	
+			//echo 'Test 3'; exit;
+			//echo $startdate.'<>'.$endate."<>".$adExchange; exit; 
 			
 			$conf 		= 	$GLOBALS['_MAX']['CONF']['database'];
 			$host		=	$conf['host'];
@@ -329,8 +331,8 @@ $date[]=$end;
 			$sql 		= 	"call getRepResAdmin('".$startdate."','".$endate."','".$adExchange."')";
 			$statment	=	$dbh->query($sql);
 			$reqcounts 	=	$statment->fetchAll(PDO::FETCH_ASSOC);
-			
-			//print_r($reqcounts);
+			//echo '<pre>';
+			//print_r($reqcounts); exit;
 			//echo "test";
 			
 			$dbh 		= 	null;
@@ -343,24 +345,24 @@ $date[]=$end;
 													left JOIN rv_clients as oxcl ON oxcl.clientid=oxc.clientid 
 													LEFT JOIN rv_dj_dsp as adx ON adx.id=a.exchange_id
 													 where DATE(a.datetime) between '$startdate' and '$endate'  group by a.exchange_id");*/
-									
-			$stat	=	OA_Dal_Delivery_query("	SELECT req.exchange_id as exchange_id,
+			$existing_query="	SELECT req.exchange_id as exchange_id,
 												 IFNULL(COUNT(win.id),0) as win_count,
 												 IFNULL(SUM(win.price),0) as win_price,
 												 IFNULL(SUM(res.advertiser_bid_price),0) as bid_price
 												FROM $win_notice_tbl as win 
 												left join $response_tbl as res on res.requset_id= win.request_id 
-												left join $request_tbl	 req on req.id=res.requset_id 
+												left join $request_tbl	 req on req.bid_request_id=res.id 
 												LEFt JOIN rv_banners as oxb ON oxb.bannerid=res.adid 
 												LEFT JOIN rv_campaigns as oxc ON oxc.campaignid=oxb.campaignid
 												LEFt JOIN rv_clients as oxcl ON oxcl.clientid=oxc.clientid 
 												LEFT JOIN rv_dj_dsp as adx ON adx.id=req.exchange_id 		
 												WHERE 1 AND DATE(res.datetime) between  '$startdate' and '$endate' 
 												and oxcl.agencyid='$agency_id' 
-												AND DATE(win.datetime) between '$startdate' and '$endate' 
-												AND DATE(res.datetime) between '$startdate' and '$endate' 
+												
 												GROUP BY DATE(req.datetime),req.exchange_id
-												ORDER BY DATE(req.datetime) DESC");
+												ORDER BY DATE(req.datetime) DESC";	
+				
+			$stat	=	OA_Dal_Delivery_query("SELECT count(win.id) as win_count ,sum(win.price) as win_price,sum(res.advertiser_bid_price) as bid_price FROM $win_notice_tbl win join $response_tbl res on res.id=win.bidid where date(win.datetime)='$startdate'");
 							
 		}
 			
@@ -478,21 +480,14 @@ if(OA_Dal_Delivery_numRows($stat)>0)
 
 while($value	=	OA_Dal_Delivery_fetchAssoc($stat))
 {		
-$exchangename=OA_Dal_Delivery_fetchAssoc(OA_Dal_Delivery_query("select * from rv_dj_dsp where id='".$value['exchange_id']."'"));
+//$exchangename=OA_Dal_Delivery_fetchAssoc(OA_Dal_Delivery_query("select * from rv_dj_dsp where id='".$value['exchange_id']."'"));
 //	print_r($reqcounts);
 	//die();
 	foreach($reqcounts as $key=>$list):  
-		if(in_array($value['exchange_id'],$list))
-		{
-			$value['req_count']	=	$list['req'];	
-			$value['res_count']	=	$list['res'];
-			break;
-		}
-		else
-		{
-			$value['req_count']	=	'';	
-		}
+		$value['req_count']	=	$list['req'];	
+		$value['res_count']	=	$list['res'];
 	endforeach;
+	$exchangename=OA_Dal_Delivery_fetchAssoc(OA_Dal_Delivery_query("select * from rv_dj_dsp where id='".$reqcounts[0]['exchange_id']."'"));
 ?>
 	
 <tr>

@@ -122,7 +122,7 @@ if($results['ad_id']!=0)
 		$cur_date  = 	date('Y-m-d H:i:s');
 			
 					//."' AND datetime='".$cur_date."'"
-				$request_query 	= 	OA_Dal_Delivery_query("SELECT id FROM {$table_prefix}dj_axonix_bid_request WHERE bid_request_id='".$request_array['id']) ;
+				$request_query 	= 	OA_Dal_Delivery_query("SELECT id FROM {$table_prefix}dj_axonix_bid_request WHERE bid_request_id='".$request_array['id']."'") ;
 				$request_row 	= 	OA_Dal_Delivery_fetchAssoc($request_query);
 				$requset_id 	= 	$request_row['id'];
 								

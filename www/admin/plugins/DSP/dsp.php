@@ -141,7 +141,7 @@ error_log(print_r($results,true),3,'../../../../logs/204/smaato/'.date('d-m-Y').
 
 if($results['ad_id']!=0)
 {
-
+		$table_prefix = $GLOBALS['_MAX']['CONF']['table']['prefix'];
 		$deliverypath=$GLOBALS['_MAX']['CONF']['webpath']['delivery'];
 		$imagepath=$GLOBALS['_MAX']['CONF']['webpath']['images'];
 		$adminpath=$GLOBALS['_MAX']['CONF']['webpath']['admin'];
@@ -153,13 +153,14 @@ if($results['ad_id']!=0)
 		$imageurl='http://'.$imagepath."/".$results['filename'];			
 
 		$cur_date  = 	date('Y-m-d H:i:s');
-			
+		$req	=$request_array['id'];		
 			//' AND datetime='".$cur_date."'
-				$request_query 	= 	OA_Dal_Delivery_query("SELECT id FROM {$table_prefix}dj_dsp_bid_request WHERE bid_request_id='".$request_array['id']) ;
+				$request_query 	= 	OA_Dal_Delivery_query("SELECT id FROM {$table_prefix}dj_dsp_bid_request WHERE bid_request_id='".$req."'") ;
 				$request_row 	= 	OA_Dal_Delivery_fetchAssoc($request_query);
 				
-				 $requset_id 	= 	$request_row['id'];
-					
+				  $requset_id 	= 	$request_row['id'];
+			//error_log("SELECT id FROM {$table_prefix}dj_dsp_bid_request WHERE bid_request_id='".$req."'",3,'../../../../logs/204/smaato/camp.log');
+			//error_log(PHP_EOL,3,'../../../../logs/204/smaato/camp.log');			
 							
 				OA_Dal_Delivery_query("INSERT INTO  
 								`{$table_prefix}dj_dsp_response` (

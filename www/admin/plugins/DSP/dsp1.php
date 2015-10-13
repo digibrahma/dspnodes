@@ -35,7 +35,7 @@ function djax_getAd($adid,$id)
 
 		if((in_array('image/gif',$txt_bannertype) || in_array('image/jpeg',$txt_bannertype) || in_array('image/png',$txt_bannertype)) && !in_array('2',$btype))
 		{
-			$cond="web";
+			$cond="web and masterbanner=-1";
 				
 		}
 		elseif((in_array('text/plain',$txt_bannertype) || in_array('text/html',$txt_bannertype) && empty($width) && empty($height)) && !in_array('1',$btype))
@@ -98,7 +98,9 @@ function dsp_adprocessing($requestparams,$id)
 	$GLOBALS['_MAX']['CONF']['request_info']=$request_array;
 	
 	$djax_allads=djax_getAd($request_array,$id);
-			
+		
+print_r($djax_allads);
+die();	
 	
 	$limitedcampaigns=_adSelectCheckCriteria($djax_allads);
 	

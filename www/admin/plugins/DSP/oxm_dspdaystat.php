@@ -248,7 +248,7 @@ $date[]=$end_date;
 										oxcl.clientname as client_name
 										FROM rv_dj_dsp_win_notice as win 
 										left join rv_dj_dsp_response as res on res.requset_id= win.request_id 
-										left join rv_dj_dsp_bid_request req on req.id=res.requset_id 
+										left join rv_dj_dsp_bid_request req on req.bid_requset_id=res.id  
 										LEFt JOIN rv_banners as oxb ON oxb.bannerid=res.adid 
 										LEFT JOIN rv_campaigns as oxc ON oxc.campaignid=oxb.campaignid
 										LEFt JOIN rv_clients as oxcl ON oxcl.clientid=oxc.clientid 
@@ -353,7 +353,7 @@ $date[]=$end_date;
 												oxb.description as ban_name
 												FROM rv_dj_dsp_win_notice as win 
 												left join rv_dj_dsp_response as res on res.requset_id= win.request_id 
-												left join rv_dj_dsp_bid_request req on req.id=res.requset_id 
+												left join rv_dj_dsp_bid_request req on req.bid_requset_id=res.id  
 												LEFt JOIN rv_banners as oxb ON oxb.bannerid=res.adid 
 												LEFT JOIN rv_campaigns as oxc ON oxc.campaignid=oxb.campaignid
 												LEFt JOIN rv_clients as oxcl ON oxcl.clientid=oxc.clientid 
@@ -392,7 +392,7 @@ $date[]=$end_date;
 												oxb.description as ban_name
 												FROM rv_dj_dsp_win_notice as win 
 												left join rv_dj_dsp_response as res on res.requset_id= win.request_id 
-												left join rv_dj_dsp_bid_request req on req.id=res.requset_id 
+												left join rv_dj_dsp_bid_request req on req.bid_requset_id=res.id 
 												LEFt JOIN rv_banners as oxb ON oxb.bannerid=res.adid 
 												LEFT JOIN rv_campaigns as oxc ON oxc.campaignid=oxb.campaignid
 												LEFt JOIN rv_clients as oxcl ON oxcl.clientid=oxc.clientid 
