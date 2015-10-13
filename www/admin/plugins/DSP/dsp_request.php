@@ -39,6 +39,7 @@ else
 		error_log('['.date('d-m-Y H:i:s')."]",3,'../../../../logs/'.date('d-m-Y')."_smaato_data.log");
 		error_log(PHP_EOL,3,"../../../../logs/".date('d-m-Y')."_smaato_data.log");
 		error_log(print_r($jsonStr,true),3,"../../../../logs/".date('d-m-Y')."_smaato_data.log");
+//error_log(print_r($req_arr,true),3,"../../../../logs/os_data.log");
 		error_log(PHP_EOL,3,"../../../../logs/".date('d-m-Y')."_smaato_data.log");
 	//error_log(print_r($req_arr,true),3,"req.log");
 	//error_log("\n",3,"error.log"); //../../../logs/

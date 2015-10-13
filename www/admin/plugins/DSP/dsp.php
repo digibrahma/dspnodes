@@ -124,9 +124,20 @@ function dsp_adprocessing($requestparams,$id)
 	
 	$finallimit=@array_intersect_key($djax_allads,$limitedcampaigns);
 	
-	$results =@array_reduce($finallimit, function ($a, $b) {
+			 	
+//error_log(print_r($finallimit[array_rand($finallimit,1)],true),3,'../../../../logs/204/smaato/camp.log');
+//				error_log(PHP_EOL,3,'../../../../logs/204/smaato/camp.log');	
+
+
+	/*$results =@array_reduce($finallimit, function ($a, $b) {
     return @$a['revenue'] > $b['revenue'] ? $a : $b ;
-	});
+	});*/
+$results =	$finallimit[array_rand($finallimit,1)];
+error_log('['.date('d-m-Y H:i:s').']',3,'../../../../logs/204/smaato/'.date('d-m-Y')."_smaato_res.log");
+error_log(PHP_EOL,3,'../../../../logs/204/smaato/'.date('d-m-Y')."_smaato_res.log");
+error_log(print_r($results,true),3,'../../../../logs/204/smaato/'.date('d-m-Y')."_smaato_res.log");
+
+
 
 if($results['ad_id']!=0)
 {
@@ -324,10 +335,11 @@ $paramName=$GLOBALS['_MAX']['CONF']['request_info']['device']['geo']['country'];
 $fetchrows=OA_Dal_Delivery_fetchAssoc(OA_Dal_Delivery_query("SELECT value FROM `djax_targ_country` where iso_countycode_alpha3='".$paramName."'"));
 
 $data = explode(',',$limitation);
-$finaldetails=array_map('strtolower',$countrylimit);
+$finaldetails=array_map('strtolower',$data);
 
 if( $op=='=~' && in_array(strtolower($fetchrows['value']),$finaldetails))
 {
+
 return true;
 }
 elseif( $op=='!~' && !(in_array(strtolower($fetchrows['value']),$finaldetails)))
@@ -337,6 +349,7 @@ return true;
 else
 {		$re_id	=	$GLOBALS['_MAX']['CONF']['request_info']['id'];	
 		error_log('['.date('d-m-Y H:i:s').'] Bidid=	'.$re_id.'	Request country '.$paramName." is not matched",3,'../../../../logs/204/smaato/'.date('d-m-Y')."_smaato_204.log");
+
 	error_log(PHP_EOL,3,"../../../../logs/204/smaato/".date('d-m-Y')."_smaato_204.log");
 return false;
 }
@@ -360,6 +373,7 @@ else
 {
 	$re_id	=	$GLOBALS['_MAX']['CONF']['request_info']['id'];		
 	error_log('['.date('d-m-Y H:i:s').'] Bidid= '.$re_id.' Request Operating  system '.$req_os." is not matched",3,'../../../../logs/204/smaato/'.date('d-m-Y')."_smaato_204.log");
+
 	error_log(PHP_EOL,3,"../../../../logs/204/smaato/".date('d-m-Y')."_smaato_204.log");
 return false;
 }
