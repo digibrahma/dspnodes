@@ -24,7 +24,7 @@ $table_prefix = $GLOBALS['_MAX']['CONF']['table']['prefix'];
 		$cur 		= 	$_REQUEST['cur'];		
 		$cur_date 	= 	date('Y-m-d H:i:s');
 
-		$fetchdata=mysql_fetch_assoc(mysql_query("select id from {$table_prefix}dj_dsp_bid_request where bid_request_id='$bidid'"));
+		//$fetchdata=mysql_fetch_assoc(mysql_query("select id from {$table_prefix}dj_dsp_bid_request where bid_request_id='$bidid'"));
 		
 		/********** Insert Win notice into AFF_SMAATO_WIN_NOTICE **********/
 		$sql = "INSERT INTO  
@@ -59,6 +59,7 @@ $table_prefix = $GLOBALS['_MAX']['CONF']['table']['prefix'];
 		
 		if(mysql_query($sql))
 		{
+			mysql_close();
 			//mysql_query("INSERT INTO rv_imp_ck(`ad_id`,`date_time`)VALUES ('".$adid."','".$cur_date."')");
 		// if(mysql_query("update {$table_prefix}dj_dsp_response set win_notice='1' where id='".$bidid."'"))
 		 {

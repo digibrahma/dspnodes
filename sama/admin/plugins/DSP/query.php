@@ -1,7 +1,10 @@
 <?php
 error_reporting(E_ALL);
+
+
+
 $fields = array (
-  'at' => 2,
+    'at' => 2,
   'badv' => 
   array (
     0 => 'myntra.com',
@@ -36,14 +39,14 @@ $fields = array (
   ),
   'device' => 
   array (
-    'connectiontype' => 0,
+    'connectiontype' => 2,
     'devicetype' => 1,
     'geo' => 
     array (
       'country' => 'IND',
       'type' => 3,
     ),
-    'ip' => '101.222.166.197',
+    'ip' => '255.255.166.197',
     'js' => 0,
     'make' => 'Generic',
     'model' => 'Android 1.5',
@@ -80,14 +83,14 @@ $fields = array (
           0 => 1,
           1 => 3,
         ),
-        'h' => 36,
+        'h' => 50,
         'mimes' => 
         array (
           0 => 'image/gif',
           1 => 'image/jpeg',
           2 => 'image/png',
         ),
-        'w' => 216,
+        'w' => 320,
       ),
       'displaymanager' => 'SOMA',
       'id' => '1',
@@ -114,25 +117,28 @@ $fields = array (
   ),
 );
 
-//print_r($fields);exit;
 
-
-//$response = http_post_flds("http://staging.digibrahma.in/sama/admin/plugins/DSP/dsp_request.php?dsp=testsmaato", $fields);
-
-//echo $response;
-
-$url = 'http://staging.digibrahma.in/sama/admin/plugins/DSP/dsp_request.php?dsp=testsmaato';
-
+$url = 'http://staging.digibrahma.in/www/admin/plugins/DSP/dsp_request.php?dsp=testsmaato';
+/*
 $options = array(
         'http' => array(
         'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
         'method'  => 'POST',
-        'content' => http_build_query($fields),
+        'content' => http_build_query($fields,'','&amp;'),
     )
 );
 
 $context  = stream_context_create($options);
 $result = file_get_contents($url, false, $context);
+*/
+//$result = http_post_flds($url,$fields);
+
+    $ch = curl_init($url); 
+    curl_setopt($ch, CURLOPT_POST, true); 
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($fields)); 
+    $result = curl_exec($ch); 
+
+
 print_r($result);
 
 

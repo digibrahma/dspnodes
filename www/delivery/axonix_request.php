@@ -3,6 +3,18 @@
 require_once 'axonix.php';
 require_once '../../init.php';
 require_once MAX_PATH . '/lib/OA/Dal/Delivery/mysql.php';
+require_once MAX_PATH . '/plugins/deliveryLimitations/Client/Useragent.delivery.php';
+require_once MAX_PATH . '/plugins/deliveryLimitations/Client/Browser.delivery.php';
+require_once MAX_PATH . '/plugins/deliveryLimitations/Client/Domain.delivery.php';
+require_once MAX_PATH . '/plugins/deliveryLimitations/Client/Language.delivery.php';
+require_once MAX_PATH . '/plugins/deliveryLimitations/Client/ConnectionType.delivery.php';
+require_once MAX_PATH . '/plugins/deliveryLimitations/Client/InApp.delivery.php';
+require_once MAX_PATH . '/plugins/deliveryLimitations/Client/Os.delivery.php';
+require_once MAX_PATH . '/plugins/deliveryLimitations/Time/Hour.delivery.php';
+require_once MAX_PATH . '/plugins/deliveryLimitations/Time/Day.delivery.php';
+require_once MAX_PATH . '/plugins/deliveryLimitations/Time/Date.delivery.php';;
+$DSP_NAME_TO_ID['axonix'] = 7;
+$cur_date = date('Y-m-d H:i:s');
 
 $table_prefix = $GLOBALS['_MAX']['CONF']['table']['prefix'];
 	
@@ -17,78 +29,8 @@ $table_prefix = $GLOBALS['_MAX']['CONF']['table']['prefix'];
 		}
 
 	$jsonStr = $HTTP_RAW_POST_DATA;
-	error_log('['.date('d-m-Y H:i:s')."]",3,"../../logs/".date('d-m-Y')."_axonix_data.log");
-	error_log(PHP_EOL,3,"../../logs/".date('d-m-Y')."_axonix_data.log");
-	error_log(print_r($jsonStr,true),3,"../../logs/".date('d-m-Y')."_axonix_data.log");
-	error_log(PHP_EOL,3,"../../logs/".date('d-m-Y')."_axonix_data.log");
-/*	
-	$jsonStr='{
-"id":"c68a9bf31b794d35bb1bdbea45cd5e0bnghg4",
-"app":{
-"content":{
-"keywords":"Test, Testing"
-},
-"id":"84058",
-"cat":[
-"IAB19"
-],
-"keywords":"Test, Testing ",
-"name":"Sample Application",
-"bundle":"123456",
-"ver":"3.1"
-},
-"tmax":100,
-"imp":[
-{
-"id":"4a3d2e45-77d6-45ca-8b89-34d3722fb4ae",
-"bidfloor":0.3,
-"instl":0,
-"bidfloorcur":"USD",
-"ext":{
-"mobclix":{
-"itunes_categories":"Technology & Computing"
-}
-},
-"banner":{
-"h":50,
-"w":300,
-"api":[
-3
-]
-}
-}
-],
-"device":{
-"os":"ios",
-"model":"iPhone",
-"geo":{
-"region":"MO",
-"zip":"65109",
-"country":"USA",
-"city":"Jefferson City"
-},
-"osv":"7.1.2",
-"dnt":0,
-"ext":{
-"idfa":"569FBC91-FAFB-4874-AE06-76F037B6E760"
-},
-"ip":"71.50.19.253",
-"didsha1":null,
-"connectiontype":2,
-"dpidsha1":"629850f3bdcf4a91edbcd2afbe14548b03c68255",
-"ua":"Mozilla/5.0 (iPhone; CPU iPhone OS 7_1_2 like Mac OS X) AppleWebKit/537.51.2 (KHTML, like Gecko) Mobile/11D257",
-"carrier":"311-480",
-"devicetype":1,
-"language":null,
-"make":"Apple"
-},
-"user":{
-
-}
-}';	
-*/
-		
-		$req_arr = json_decode($jsonStr, true);
+	
+	$req_arr = json_decode($jsonStr, true);
 		//error_log(print_r($req_arr,true),3,"error.log");
 		//error_log('\ts',3,"error.log");
 		$data	='';
@@ -209,7 +151,20 @@ $table_prefix = $GLOBALS['_MAX']['CONF']['table']['prefix'];
 				$dev_model = @mysql_real_escape_string($req_arr['device']['model']);
 				$dev_os		=$req_arr['device']['os'];
 				$dev_ua 	= @mysql_real_escape_string($req_arr['device']['ua']);
-			
+				
+				
+				$GLOBALS['_MAX']['CONF']['request_info']['bid_id'] = $bid_req_id;
+				
+				$GLOBALS['_MAX']['CLIENT']['ua'] = $req_arr['device']['ua'];
+				$GLOBALS['_MAX']['CLIENT']['os'] = $req_arr['device']['os'];
+				$GLOBALS['_MAX']['CLIENT']['osv'] = $req_arr['device']['osv'];
+				$GLOBALS['_MAX']['CLIENT']['connectiontype'] = $req_arr['device']['connectiontype'];
+				if(!empty($app_arr)) {
+					$GLOBALS['_MAX']['CLIENT']['inapp'] = 1;	
+				} else{
+					$GLOBALS['_MAX']['CLIENT']['inapp'] = 0;	
+				}
+				
 				if(!empty($req_arr['ext']['udi']))
 				{
 					$ext_udi = $req_arr['ext']['udi'];
@@ -260,67 +215,34 @@ $table_prefix = $GLOBALS['_MAX']['CONF']['table']['prefix'];
 				$impbp='0';
 
 
-			$fetch_dsp=OA_Dal_Delivery_fetchAssoc(OA_Dal_Delivery_query("select id from rv_dj_dsp where dsp_portal_name='".$_REQUEST['dsp']."' and  status='1'"));
-			$cur_date = date('Y-m-d H:i:s');
+			$fetch_dsp['id']=$DSP_NAME_TO_ID[strtolower($_REQUEST['dsp'])];
 		
 
 			if(!empty($fetch_dsp['id']))
 			{
 
-			 OA_Dal_Delivery_query("INSERT INTO  `{$table_prefix}dj_axonix_bid_request` (
-				`datetime` ,
-				`at` ,
-				`exchange_id`,
-				`device_connectiontype` ,
-				`device_devicetype` ,
-				`device_geo_country` ,
-				`device_geo_latitude` ,
-				`device_geo_longitude` ,
-				`device_geo_type` ,
-				`device_ip` ,
-				`device_js` ,
-				`device_make` ,
-				`device_model` ,
-				`device_os` ,
-				`device_ua` ,
-				`ext_udi` ,
-				`bid_request_id` ,
-				`imp_banner_type` ,
-				`imp_banner_height` ,
-				`imp_banner_mimes` ,
-				`imp_banner_position` ,
-				`imp_banner_width` ,
-				`imp_bidfloor` ,
-				`imp_displaymanager` ,
-				`imp_id` ,
-				`site_category` ,
-				`site_domain` ,
-				`site_id` ,
-				`site_name` ,
-				`publisher_id` ,
-				`user_gender` ,
-				`user_yob`
-				)
-				VALUES (
-				'".$cur_date."', '".$at."', '".$fetch_dsp['id']."','".$con_type."', '".$dev_type."', '".$dgc."', '".$geo_lat."', '".$geo_lon."', '".$geo_type."', '".$dev_ip."', '".$dev_js."', '".$dev_make."', '".$dev_model."', '".$dev_os."', '".$dev_ua."', '".$ext_udi."', '".$b_id."', '".$b_type."', '".$b_height."', '".$b_mime."', 0, '".$b_width."', '".$bid_floor."', '".$display_manager."', '".$bid."', '".$scat."', '".$s_domain."', '".$s_id."', '".$s_name."', '".$s_p_id."', '".$gender."', '".$dob."')"); 
+			 
+			$requery = $cur_date."|!|".$at."|!|".$fetch_dsp['id']."|!|".$con_type."|!|".$dev_type."|!|".$dgc."|!|".$geo_lat."|!|".$geo_lon."|!|".$geo_type."|!|".$dev_ip."|!|".$dev_js."|!|".$dev_make."|!|".$dev_model."|!|".$dev_os."|!|".$dev_ua."|!|".$ext_udi."|!|".$b_id."|!|".$b_type."|!|".$b_height."|!|".$b_mime."', 0, '".$b_width."|!|".$bid_floor."|!|".$display_manager."|!|".$bid."|!|".$scat."|!|".$s_domain."|!|".$s_id."|!|".$s_name."|!|".$s_p_id."|!|".$gender."|!|".$dob."|!|".$req_arr['device']['ua'];
+			error_log($requery.PHP_EOL,3,"../../logs/dsp/dsp.".$fetch_dsp['id'].".".date('Y-m-d_H').".log");
 
 			}
 		}
 
 	if(!empty($fetch_dsp['id']))
 	{
-	//error_log(print_r($data,true),3,"error.log");
+	//error_log(print_r($data,true).PHP_EOL,3,"error.log");
 	//error_log('\n',3,"error.log");
 	$arr_serialize = serialize($data);
 
 	$output=axonix_adprocessing($arr_serialize,$fetch_dsp['id']);
-
+	//error_log(count($output).PHP_EOL,3,"error.log");
 	}
 	
-if($output['adtype']=='web')
+if(strcasecmp($output['adtype'],'web')==0)
 	{
 	
 		$djax_adm="<a href='".$output['click_url']."' target='_blank'><img src='".$output['beacon_url']."'  style='display:none' alt='' /><img src='".$output['image_url']."' width='".$output['width']."' height='".$output['height']."' alt=''/></a>";
+		
 	
 	}
 	else

@@ -1,4 +1,5 @@
 <?php
+define('LOG_FILE_204','../../logs/204.7.'.date('Y-m-d').'.log');
 
 require_once '../../init.php';
 
@@ -17,13 +18,14 @@ return true;
 
 function djax_getAd($adid,$id)
 {
-		//error_log('Test',3,"error.log");	
+		
 		$bid_floor=$GLOBALS['_MAX']['CONF']['request_info']['imp'][0]['bidfloor'];
 		$width=	$GLOBALS['_MAX']['CONF']['request_info']['imp'][0]['banner']['w'];
 		$height=$GLOBALS['_MAX']['CONF']['request_info']['imp'][0]['banner']['h'];
 		$reqaddomain=$GLOBALS['_MAX']['CONF']['request_info']['badv'];
 		$reqcat=$GLOBALS['_MAX']['CONF']['request_info']['bcat'];	
 		$btype=$GLOBALS['_MAX']['CONF']['request_info']['imp'][0]['banner']['btype'];
+		$bid_id = $GLOBALS['_MAX']['CONF']['request_info']['id'];
 			
 		$cc="FIND_IN_SET(".$id.",c.dsp_portals)";
 		
@@ -56,9 +58,8 @@ function djax_getAd($adid,$id)
 		}
 		else
 		{
-			$re_id	=	$GLOBALS['_MAX']['CONF']['request_info']['id'];		
-			error_log('['.date('d-m-Y H:i:s').'] bidid=	'.$re_id.'	banner '.$aAd['name']." price is below requested price ".$bid_floor,3,'../../logs/204/axonix/'.date('d-m-Y')."_axonix_204.log");
-					error_log(PHP_EOL,3,"../../logs/204/axonix/".date('d-m-Y')."_axonix_204.log");
+			$re_id	=	$GLOBALS['_MAX']['CONF']['request_info']['id'];
+			error_log(date('Y-m-d H:i:s').'|'.$bid_id.'|'.$aAd['ad_id'].'|1|'.$bid_floor.'|price is below requested price'.PHP_EOL,3,LOG_FILE_204);
 		}
 		//$aRows[$aAd['ad_id']] = $aAd;
 		$dbh = null;	
@@ -77,34 +78,20 @@ function djax_getAd($adid,$id)
 
 function axonix_adprocessing($requestparams,$id)
 {
-	//error_log(print_r($requestparams,true),3,"error.log");
-	//error_log('\n',3,"error.log");
+	
 	$table_prefix = $GLOBALS['_MAX']['CONF']['table']['prefix'];
-
 	$limitedcampaigns=array();
-
  	$request=array();
-
 	$request_array=unserialize($requestparams);
-	
 	$GLOBALS['_MAX']['CONF']['request_info']=$request_array;
-	//error_log(print_r($request_array,true),3,"error.log");
-	//error_log('\n',3,"error.log");
 	$djax_allads=djax_getAd($request_array,$id);
-	//error_log(print_r($djax_allads,true),3,"error.log");
-	//error_log('\n',3,"error.log");		
 	$limitedcampaigns=_adSelectCheckCriteria($djax_allads);
-	
 	$finallimit=@array_intersect_key($djax_allads,$limitedcampaigns);
-	 
-	/*$results =@array_reduce($finallimit, function ($a, $b) {
-    return @$a['revenue'] > $b['revenue'] ? $a : $b ;
-	});*/
-
-$results =	$finallimit[array_rand($finallimit,1)];
-error_log('['.date('d-m-Y H:i:s').']',3,'../../../../logs/204/axonix/'.date('d-m-Y')."_axonix_res.log");
-error_log(PHP_EOL,3,'../../../../logs/204/axonix/'.date('d-m-Y')."_axonix_res.log");
-error_log(print_r($results,true),3,'../../../../logs/204/axonix/'.date('d-m-Y')."_axonix_res.log");
+	
+	
+	
+	$results = $finallimit[array_rand($finallimit,1)];
+		
 	
 if($results['ad_id']!=0)
 {
@@ -122,9 +109,9 @@ if($results['ad_id']!=0)
 		$cur_date  = 	date('Y-m-d H:i:s');
 			
 					//."' AND datetime='".$cur_date."'"
-				$request_query 	= 	OA_Dal_Delivery_query("SELECT id FROM {$table_prefix}dj_axonix_bid_request WHERE bid_request_id='".$request_array['id']."'") ;
-				$request_row 	= 	OA_Dal_Delivery_fetchAssoc($request_query);
-				$requset_id 	= 	$request_row['id'];
+			//	$request_query 	= 	OA_Dal_Delivery_query("SELECT id FROM {$table_prefix}dj_axonix_bid_request WHERE bid_request_id='".$request_array['id']."'") ;
+			//	$request_row 	= 	OA_Dal_Delivery_fetchAssoc($request_query);
+			//	$requset_id 	= 	$request_row['id'];
 								
 				
 		 OA_Dal_Delivery_query("INSERT INTO  
@@ -201,7 +188,6 @@ return $response_array;
 
 function _adSelectCheckCriteria($ads)
 {
-	
 	$djax_response=array();
 	if(count($ads)>0)
 	{	$ip_limit	=	'';
@@ -218,39 +204,28 @@ function _adSelectCheckCriteria($ads)
 				if($ads[$key] && !empty($value['compiledlimitation']))
 				{		
 					@eval('$result = (' . $value['compiledlimitation'] . ');');
-					
 					if(empty($result))
 					{
 						$result=0;
 						unset($ads[$key]);
+						
 					}
 
 				}
 			
-			/*	else // sep29
-				{
-					$djax_response[$key]=1;
-				} */
+			
 				
 			if($ads[$key])
 				{
 					$djax_response[$key]=1;
 				}
 			}
+			
 			if(count($djax_response)==0)
 			{
 
-
-
-
-				$re_id	=	$GLOBALS['_MAX']['CONF']['request_info']['id'];
 				$request_ip=	$GLOBALS['_MAX']['CONF']['request_info']['device']['ip'];
-				error_log('['.date('d-m-Y H:i:s').'] bidid= '.$re_id.' Request IP '.$request_ip." is not available in Campaign id ".$ip_limit." iprange",3,'../../logs/204/axonix/'.date('d-m-Y')."_axonix_204.log");
-				error_log(PHP_EOL,3,"../../logs/204/axonix/".date('d-m-Y')."_axonix_204.log");	
-/*
-				error_log('['.date('d-m-Y H:i:s').'] bidid= '.$re_id.' Request IP '.$request_ip." is not available in Campaign id ".$ip_limit." iprange",3,'../../logs/204/axonix/'.date('d-m-Y')."_axonix1_204.log");
-				error_log(PHP_EOL,3,"../../logs/204/axonix/".date('d-m-Y')."_axonix1_204.log");	*/
- 
+				error_log(date('Y-m-d H:i:s').'|'.$GLOBALS['_MAX']['CONF']['request_info']['id'].'|'.$request_ip.'|2|'.$ip_limit.'|IP Pool'.PHP_EOL,3,LOG_FILE_204);
 
 			}
 	
@@ -267,27 +242,14 @@ function iprange($placement_id)
 	$rowCount	=	mysql_fetch_row($qryCount);
 	if(preg_replace('/\s+/', '', $rowCount[0])!="")
 	{
-		/*$qry	=	OA_Dal_Delivery_query("SELECT ipranges FROM rv_campaign_iprange WHERE campaignid = '".$placement_id."' ");
-		$row=	mysql_fetch_row($qry);*/
 		
 		$temp	=	$rowCount[0];
 		$flag	=	"0";
 		
-	//	$ipr="select ipaddress from djax_iprange  WHERE (INET_ATON('$ip') BETWEEN INET_ATON(`hostmin`) AND INET_ATON(`hostmax`)) and locid in($temp)";
-		
 		$qry1	=	OA_Dal_Delivery_query("select ipaddress from djax_iprange  WHERE (INET_ATON('$ip') BETWEEN INET_ATON(`hostmin`) AND INET_ATON(`hostmax`)) and locid in($temp)");
 		$rowCounting	=	mysql_fetch_row($qry1);
-		//print_r($rowCounting);
-		if($rowCounting)
-		{
-					
-			return true;
-		}
-		else
-		{
-			//echo "test";
-			return false;
-		}
+		
+		return ($rowCounting)?true:false;
 	}
 		else 
 		{
@@ -314,15 +276,8 @@ return true;
 }
 else
 {
-	
-	$re_id	=	$GLOBALS['_MAX']['CONF']['request_info']['id'];
-		error_log('['.date('d-m-Y H:i:s').'] bidid= '.$re_id.' Request country '.$paramName." is not matched",3,'../../logs/204/axonix/'.date('d-m-Y')."_axonix_204.log");
-	error_log(PHP_EOL,3,"../../logs/204/axonix/".date('d-m-Y')."_axonix_204.log");
-
-  
-
-
-return false;
+	error_log(date('Y-m-d H:i:s').'|'.$GLOBALS['_MAX']['CONF']['request_info']['id'].'|'.$paramName.'|3||Country'.PHP_EOL,3,LOG_FILE_204);
+	return false;
 }
 }
 
@@ -332,20 +287,19 @@ function os($limitation, $op)
 $data = explode(',',$limitation);
 $finaldetails=array_map('strtolower',$data);
 $req_os	=	$GLOBALS['_MAX']['CONF']['request_info']['device']['os'];
+
 if( $op=='=~' && in_array(strtolower($GLOBALS['_MAX']['CONF']['request_info']['device']['os']),$finaldetails))
 {
-return true;
+	return true;
 }
 elseif( $op=='!~' && !(in_array(strtolower($GLOBALS['_MAX']['CONF']['request_info']['device']['os']),$finaldetails)))
 {
-return true;
+	return true;
 }
 else
 {
-	$re_id	=	$GLOBALS['_MAX']['CONF']['request_info']['id'];
-	error_log('['.date('d-m-Y H:i:s').'] bidid= '.$re_id.' Request Operating  system '.$req_os." is not matched",3,'../../logs/204/axonix/'.date('d-m-Y')."_axonix_204.log");
-	error_log(PHP_EOL,3,"../../logs/204/axonix/".date('d-m-Y')."_axonix_204.log");
-return false;
+	error_log(date('Y-m-d H:i:s').'|'.$GLOBALS['_MAX']['CONF']['request_info']['id'].'|'.$req_os.'|4||OS'.PHP_EOL,3,LOG_FILE_204);
+	return false;
 }
 
 }
@@ -357,41 +311,41 @@ $finaldetails=array_map('strtolower',$data);
 $req_model	=	$GLOBALS['_MAX']['CONF']['request_info']['device']['model'];
 if( $op=='=~' && in_array(strtolower($GLOBALS['_MAX']['CONF']['request_info']['device']['model']),$finaldetails))
 {
-return true;
+	return true;
 }
 elseif( $op=='!~' && !(in_array(strtolower($GLOBALS['_MAX']['CONF']['request_info']['device']['model']),$finaldetails)))
 {
-return true;
+	return true;
 }
 else
 {
-	$re_id	=	$GLOBALS['_MAX']['CONF']['request_info']['id'];
-	error_log('['.date('d-m-Y H:i:s').'] bidid=	'.$re_id.'	Request model  '.$req_model." is not matched",3,'../../logs/204/axonix/'.date('d-m-Y')."_smaato_204.log");
-	error_log(PHP_EOL,3,"../../logs/204/axonix/".date('d-m-Y')."_axonix_204.log");
-
-return false;
+	
+	error_log(date('Y-m-d H:i:s').'|'.$GLOBALS['_MAX']['CONF']['request_info']['id'].'|'.$req_model.'|5||DeviceModel'.PHP_EOL,3,LOG_FILE_204);
+	return false;
 }
 }
 
 function handset($limitation, $op, $aParams = array())
 {
+
 $data = explode(',',$limitation);
 $finaldetails=array_map('strtolower',$data);
 $make	= $GLOBALS['_MAX']['CONF']['request_info']['device']['make'];
+
 if( $op=='=~' && in_array(strtolower($GLOBALS['_MAX']['CONF']['request_info']['device']['make']),$finaldetails))
 {
-return true;
+	return true;
 }
-elseif( $op=='!~' && !(in_array(strtolower($GLOBALS['_MAX']['CONF']['request_info']['device']['make']),$finaldetails)))
+	elseif( $op=='!~' && !(in_array(strtolower($GLOBALS['_MAX']['CONF']['request_info']['device']['make']),$finaldetails)))
 {
-return true;
+	return true;
 }
 else
-{
-	$re_id	=	$GLOBALS['_MAX']['CONF']['request_info']['id'];
-	error_log('['.date('d-m-Y H:i:s').'] bidid = '.$re_id.' Request handset  '.$make." is not matched",3,'../../logs/204/axonix/'.date('d-m-Y')."_smaato_204.log");
-	error_log(PHP_EOL,3,"../../logs/204/axonix/".date('d-m-Y')."_axonix_204.log");
+{	error_log(date('Y-m-d H:i:s').'|'.$GLOBALS['_MAX']['CONF']['request_info']['id'].'|'.$make.'|6||DeviceMake'.PHP_EOL,3,LOG_FILE_204);
 	return false;
 }
 	
 }
+
+
+

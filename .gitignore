@@ -6,3 +6,5 @@ var/rig.digibramha.com.conf copy.bak
 *.txt
 
 var/staging.digibrahma.in.conf.php
+
+*.log

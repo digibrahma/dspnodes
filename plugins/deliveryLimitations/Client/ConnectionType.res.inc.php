@@ -17,25 +17,13 @@
  */
 
 $res = array(
-    'w7'        => 'Windows 7',
-    'xp'        => 'Windows XP',
-    '2k'        => 'Windows 2000',
-    '98'        => 'Windows 98',
-    '95'        => 'Windows 95',
-    'me'        => 'Windows ME',
-    'ce'        => 'Windows CE',
-    'nt'        => 'Windows NT',
-    'nt4.0'     => 'Windows NT 4.0',
-    'nt5.2'     => 'Windows NT 5.2',
-    'linux'     => 'Linux',
-    'freebsd'   => 'FreeBSD',
-    'sun'       => 'Solaris',
-    'osx'       => 'Mac OSX',
-    'ppc'       => 'Mac Classic',
-    'aix'       => 'AIX',
-    'android'       => 'Android',
-    'ios'       => 'iOS',
-    'Unknown'   => 'Unknown',
+    '0'        => 'Unknown',
+    '1'        => 'Ethernet',
+    '2'        => 'Wifi',
+    '3'        => 'Cellular (Unknown Generation)',
+    '4'        => '2G/EDGE/GPRS',
+    '5'        => '3G/HSDPA/HSUPA',
+    '6'        => '4G/LTE'
 );
 
 ?>

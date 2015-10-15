@@ -22,7 +22,7 @@ $table_prefix = $GLOBALS['_MAX']['CONF']['table']['prefix'];
 		$cur 		= 	$_REQUEST['cur'];		
 		$cur_date 	= 	date('Y-m-d H:i:s');
 //error_log("select id from rv_dj_axonix_bid_request where bid_request_id='$bidid'", 3, 'error.log');
-		$fetchdata=mysql_fetch_array(mysql_query("select id from rv_dj_axonix_bid_request where bid_request_id='$bidid'"));
+		//$fetchdata=mysql_fetch_array(mysql_query("select id from rv_dj_axonix_bid_request where bid_request_id='$bidid'"));
 
 
 

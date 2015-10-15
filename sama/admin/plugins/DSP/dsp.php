@@ -1,10 +1,10 @@
 <?php
+define('LOG_FILE_204','../../../../logs/204.6.'.date('Y-m-d').'.log');
 
 require_once '../../../../init.php';
 
-//require '../../../../var/config.php';
-
-$table_prefix = $GLOBALS['_MAX']['CONF']['table']['prefix'];
+	$table_prefix = $GLOBALS['_MAX']['CONF']['table']['prefix'];
+	$request_array = '';
 
 function OX_Delivery_logMessage($message, $priority = 6)
 {
@@ -12,7 +12,7 @@ $conf = $GLOBALS['_MAX']['CONF'];
 if (empty($conf['deliveryLog']['enabled'])) return true;
 $priorityLevel = is_numeric($conf['deliveryLog']['priority']) ? $conf['deliveryLog']['priority'] : 6;
 if ($priority > $priorityLevel && empty($_REQUEST[$conf['var']['trace']])) { return true; }
-error_log('[' . date('r') . "] {$conf['log']['ident']}-delivery-{$GLOBALS['_MAX']['thread_id']}: {$message}\n", 3, MAX_PATH . '/var/' . $conf['deliveryLog']['name']);
+//1error_log('[' . date('r') . "] {$conf['log']['ident']}-delivery-{$GLOBALS['_MAX']['thread_id']}: {$message}\n", 3, MAX_PATH . '/var/' . $conf['deliveryLog']['name']);
 //OX_Delivery_Common_hook('logMessage', array($message, $priority));
 return true;
 }
@@ -31,18 +31,16 @@ function djax_getAd($adid,$id)
 		$reqaddomain=$GLOBALS['_MAX']['CONF']['request_info']['badv'];
 		$reqcat=$GLOBALS['_MAX']['CONF']['request_info']['bcat'];	
 		$btype=$GLOBALS['_MAX']['CONF']['request_info']['imp'][0]['banner']['btype'];
-		
+		$bid_id = $GLOBALS['_MAX']['CONF']['request_info']['id'];
 		
 		if((in_array('image/gif',$txt_bannertype) || in_array('image/jpeg',$txt_bannertype) || in_array('image/png',$txt_bannertype)) && !in_array('2',$btype))
 		{
-			//error_log($width.'=,='.$height.',',3,"error.log");
 			$cond="web";
 				
 		}
 		elseif((in_array('text/plain',$txt_bannertype) || in_array('text/html',$txt_bannertype) && empty($width) && empty($height)) && !in_array('1',$btype))
 		{ 
 
-			//error_log($width.','.$height.',',3,"req.log");
 			$width=0;
 			$height=0;
 			$cond="txt";
@@ -64,13 +62,13 @@ function djax_getAd($adid,$id)
 		$dbh = new PDO("mysql:host=$host;port=3306;dbname=$database", $conf['username'],  $conf['password']) or die(mysql_error());
 		if($dbh)
 		{
-			//error_log('['.date('d-m-Y H:i:s').'] Woking ',3,"../../../../logs/pdo.log");
+			//error_log(date('Y-m-d H:i:s').' Woking ',3,"../../../../logs/pdo.log");
 			//error_log(PHP_EOL,3,"../../../../logs/pdo.log");
 		}
 		else
 		{
-			error_log('['.date('d-m-Y H:i:s').'] smatto faild ',3,"../../../../logs/pdo.log");
-			error_log(PHP_EOL,3,"../../../../logs/pdo.log");
+			//1error_log(date('Y-m-d H:i:s').' smatto faild ',3,"../../../../logs/pdo.log");
+			//1error_log(PHP_EOL,3,"../../../../logs/pdo.log");
 }	
 		$sql = "call getAd('".$width."','".$height."','".$id."','".$cond."','".$reqaddomain."','".$reqcat."')";
 		
@@ -85,19 +83,12 @@ function djax_getAd($adid,$id)
 			}
 			else
 			{
-				   error_log('['.date('d-m-Y H:i:s').'] banner '.$aAd['name']." price is below requested price",3,'../../../../logs/204/smaato/'.date('d-m-Y')."_smaato_204.log");
-					error_log(PHP_EOL,3,"../../../../logs/204/smaato/".date('d-m-Y')."_smaato_204.log");
-					/* error_log(PHP_EOL,3,"../../../../logs/204/smaato/".date('d-m-Y')."_smaato_204.log");*/
+			        error_log(date('Y-m-d H:i:s').'|'.$bid_id.'|'.$aAd['ad_id'].'|1||price is below requested price'.PHP_EOL,3,LOG_FILE_204);
 					
 			}
 		} 
 		
 		$dbh = null;	
-
-		
-	//	$GLOBALS['_MAX']['CONF'][$aAd['ad_id']]=$aRows;
-		
-		
 		return $aRows;
 }
 
@@ -105,33 +96,25 @@ function djax_getAd($adid,$id)
 function dsp_adprocessing($requestparams,$id)
 {
 	
-	
 	$table_prefix = $GLOBALS['_MAX']['CONF']['table']['prefix'];
-
-	$limitedcampaigns=array();
-
+        $limitedcampaigns=array();
 	$banner=array();
-
- 	$request=array();
-
+	$request=array();
 	$request_array=unserialize($requestparams);
-
 	$GLOBALS['_MAX']['CONF']['request_info']=$request_array;
-	
 	$djax_allads=djax_getAd($request_array,$id);
-	print_r($djax_allads);exit;
+
 			
 	$limitedcampaigns=_adSelectCheckCriteria($djax_allads);
 	
 	$finallimit=@array_intersect_key($djax_allads,$limitedcampaigns);
+	$results =	$finallimit[array_rand($finallimit,1)];
 	
-	$results =@array_reduce($finallimit, function ($a, $b) {
-    return @$a['revenue'] > $b['revenue'] ? $a : $b ;
-	});
+
 
 if($results['ad_id']!=0)
 {
-
+		$table_prefix = $GLOBALS['_MAX']['CONF']['table']['prefix'];
 		$deliverypath=$GLOBALS['_MAX']['CONF']['webpath']['delivery'];
 		$imagepath=$GLOBALS['_MAX']['CONF']['webpath']['images'];
 		$adminpath=$GLOBALS['_MAX']['CONF']['webpath']['admin'];
@@ -143,14 +126,10 @@ if($results['ad_id']!=0)
 		$imageurl='http://'.$imagepath."/".$results['filename'];			
 
 		$cur_date  = 	date('Y-m-d H:i:s');
-			
-			//' AND datetime='".$cur_date."'
-				$request_query 	= 	OA_Dal_Delivery_query("SELECT id FROM {$table_prefix}dj_dsp_bid_request WHERE bid_request_id='".$request_array['id']) ;
-				$request_row 	= 	OA_Dal_Delivery_fetchAssoc($request_query);
-				
-				 $requset_id 	= 	$request_row['id'];
-					
-							
+		$req	=$request_array['id'];		
+		//$request_query 	= 	OA_Dal_Delivery_query("SELECT id FROM {$table_prefix}dj_dsp_bid_request WHERE bid_request_id='".$req."'") ;
+		//$request_row 	= 	OA_Dal_Delivery_fetchAssoc($request_query);
+		//$requset_id 	= 	$request_row['id'];					
 				OA_Dal_Delivery_query("INSERT INTO  
 								`{$table_prefix}dj_dsp_response` (
 									`datetime`,
@@ -245,8 +224,11 @@ function _adSelectCheckCriteria($ads)
 				}		
 						
 				if($ads[$key] && !empty($value['compiledlimitation']))
-				{		
+				{
+					
 					@eval('$result = (' . $value['compiledlimitation'] . ');');
+					//echo 'AdID= '.$value['ad_id'].',$result = (' . $value['compiledlimitation'] . '); and Result='.$result.'<br>';
+
 					
 					if(empty($result))
 					{
@@ -270,8 +252,9 @@ function _adSelectCheckCriteria($ads)
 			{
 				$re_id	=	$GLOBALS['_MAX']['CONF']['request_info']['id'];	
 				$request_ip=	$GLOBALS['_MAX']['CONF']['request_info']['device']['ip'];
-				error_log('['.date('d-m-Y H:i:s').'] bidid= '.$re_id.' Request IP '.$request_ip." is not available in Campaign id ".$ip_limit." iprange",3,'../../../../logs/204/smaato/'.date('d-m-Y')."_smaato_204.log");
-				error_log(PHP_EOL,3,"../../../../logs/204/smaato/".date('d-m-Y')."_smaato_204.log");	
+				error_log(date('Y-m-d H:i:s').'|'.$GLOBALS['_MAX']['CONF']['request_info']['id'].'|'.$request_ip.'|2|IP Pool'.PHP_EOL,3,LOG_FILE_204);
+				//1error_log(date('Y-m-d H:i:s').' bidid= '.$re_id.' Request IP '.$request_ip." is not available in Campaign id ".$ip_limit." iprange",3,'../../../../logs/204/smaato/'.date('d-m-Y')."_smaato_204.log");
+				//1error_log(PHP_EOL,3,"../../../../logs/204/smaato/".date('d-m-Y')."_smaato_204.log");	
 			}
 	
 	}
@@ -287,29 +270,14 @@ function iprange($placement_id)
 	$rowCount	=	mysql_fetch_row($qryCount);
 	if(preg_replace('/\s+/', '', $rowCount[0])!="")
 	{
-		/*$qry	=	OA_Dal_Delivery_query("SELECT ipranges FROM rv_campaign_iprange WHERE campaignid = '".$placement_id."' ");
-		$row=	mysql_fetch_row($qry);*/
 		
 		$temp	=	$rowCount[0];
 		$flag	=	"0";
-		
-	//	$ipr="select ipaddress from djax_iprange  WHERE (INET_ATON('$ip') BETWEEN INET_ATON(`hostmin`) AND INET_ATON(`hostmax`)) and locid in($temp)";
-		
-
-		
 		$qry1	=	OA_Dal_Delivery_query("select ipaddress from djax_iprange  WHERE (INET_ATON('$ip') BETWEEN INET_ATON(`hostmin`) AND INET_ATON(`hostmax`)) and locid in($temp)");
 		$rowCounting	=	mysql_fetch_row($qry1);
-		//print_r($rowCounting);
-		if($rowCounting)
-		{
-					
-			return true;
-		}
-		else
-		{
-			//echo "test";
-			return false;
-		}
+		
+		return ($rowCounting)?true:false;
+		
 	}
 		else 
 		{
@@ -325,21 +293,20 @@ $paramName=$GLOBALS['_MAX']['CONF']['request_info']['device']['geo']['country'];
 $fetchrows=OA_Dal_Delivery_fetchAssoc(OA_Dal_Delivery_query("SELECT value FROM `djax_targ_country` where iso_countycode_alpha3='".$paramName."'"));
 
 $data = explode(',',$limitation);
-$finaldetails=array_map('strtolower',$countrylimit);
+$finaldetails=array_map('strtolower',$data);
 
 if( $op=='=~' && in_array(strtolower($fetchrows['value']),$finaldetails))
 {
-return true;
+	return true;
 }
 elseif( $op=='!~' && !(in_array(strtolower($fetchrows['value']),$finaldetails)))
 {
-return true;
+	return true;
 }
 else
-{		$re_id	=	$GLOBALS['_MAX']['CONF']['request_info']['id'];	
-		error_log('['.date('d-m-Y H:i:s').'] Bidid=	'.$re_id.'	Request country '.$paramName." is not matched",3,'../../../../logs/204/smaato/'.date('d-m-Y')."_smaato_204.log");
-	error_log(PHP_EOL,3,"../../../../logs/204/smaato/".date('d-m-Y')."_smaato_204.log");
-return false;
+{	$re_id	=	$GLOBALS['_MAX']['CONF']['request_info']['id'];
+	error_log(date('Y-m-d H:i:s').'|'.$GLOBALS['_MAX']['CONF']['request_info']['id'].'|'.$paramName.'|3|Country'.PHP_EOL,3,LOG_FILE_204);
+	return false;
 }
 }
 
@@ -349,20 +316,20 @@ function os($limitation, $op)
 $data = explode(',',$limitation);
 $finaldetails=array_map('strtolower',$data);
 $req_os	=	$GLOBALS['_MAX']['CONF']['request_info']['device']['os'];
+
 if( $op=='=~' && in_array(strtolower($GLOBALS['_MAX']['CONF']['request_info']['device']['os']),$finaldetails))
 {
-return true;
+	return true;
 }
 elseif( $op=='!~' && !(in_array(strtolower($GLOBALS['_MAX']['CONF']['request_info']['device']['os']),$finaldetails)))
 {
-return true;
+	return true;
 }
 else
 {
-	$re_id	=	$GLOBALS['_MAX']['CONF']['request_info']['id'];		
-	error_log('['.date('d-m-Y H:i:s').'] Bidid= '.$re_id.' Request Operating  system '.$req_os." is not matched",3,'../../../../logs/204/smaato/'.date('d-m-Y')."_smaato_204.log");
-	error_log(PHP_EOL,3,"../../../../logs/204/smaato/".date('d-m-Y')."_smaato_204.log");
-return false;
+	$re_id	=	$GLOBALS['_MAX']['CONF']['request_info']['id'];
+	error_log(date('Y-m-d H:i:s').'|'.$GLOBALS['_MAX']['CONF']['request_info']['id'].'|'.$req_os.'|4|OS'.PHP_EOL,3,LOG_FILE_204);
+	return false;
 }
 
 }
@@ -374,41 +341,41 @@ $finaldetails=array_map('strtolower',$data);
 $req_model	=	$GLOBALS['_MAX']['CONF']['request_info']['device']['model'];
 if( $op=='=~' && in_array(strtolower($GLOBALS['_MAX']['CONF']['request_info']['device']['model']),$finaldetails))
 {
-return true;
+	return true;
 }
 elseif( $op=='!~' && !(in_array(strtolower($GLOBALS['_MAX']['CONF']['request_info']['device']['model']),$finaldetails)))
 {
-return true;
+	return true;
 }
 else
 {
-	$re_id	=	$GLOBALS['_MAX']['CONF']['request_info']['id'];		
-	error_log('['.date('d-m-Y H:i:s').'] bidid= '.$re_id.' Request model  '.$req_model." is not matched",3,'../../../../logs/204/smaato/'.date('d-m-Y')."_smaato_204.log");
-	error_log(PHP_EOL,3,"../../../../logs/204/smaato/".date('d-m-Y')."_smaato_204.log");
-
-return false;
+	$re_id	=	$GLOBALS['_MAX']['CONF']['request_info']['id'];
+	error_log(date('Y-m-d H:i:s').'|'.$GLOBALS['_MAX']['CONF']['request_info']['id'].'|'.$req_model.'|5|DeviceModel'.PHP_EOL,3,LOG_FILE_204);
+	return false;
 }
 }
 
 function handset($limitation, $op, $aParams = array())
 {
+
 $data = explode(',',$limitation);
 $finaldetails=array_map('strtolower',$data);
 $make	= $GLOBALS['_MAX']['CONF']['request_info']['device']['make'];
+
 if( $op=='=~' && in_array(strtolower($GLOBALS['_MAX']['CONF']['request_info']['device']['make']),$finaldetails))
 {
-return true;
+	return true;
 }
-elseif( $op=='!~' && !(in_array(strtolower($GLOBALS['_MAX']['CONF']['request_info']['device']['make']),$finaldetails)))
+	elseif( $op=='!~' && !(in_array(strtolower($GLOBALS['_MAX']['CONF']['request_info']['device']['make']),$finaldetails)))
 {
-return true;
+	return true;
 }
 else
-{	$re_id	=	$GLOBALS['_MAX']['CONF']['request_info']['id'];	
-	error_log('['.date('d-m-Y H:i:s').'] bidid= '.$re_id.' Request handset  '.$make." is not matched",3,'../../../../logs/204/smaato/'.date('d-m-Y')."_smaato_204.log");
-	error_log(PHP_EOL,3,"../../../../logs/204/smaato/".date('d-m-Y')."_smaato_204.log");
-return false;
+{	$re_id	=	$GLOBALS['_MAX']['CONF']['request_info']['id'];
+	error_log(date('Y-m-d H:i:s').'|'.$GLOBALS['_MAX']['CONF']['request_info']['id'].'|'.$make.'|6|DeviceMake'.PHP_EOL,3,LOG_FILE_204);
+	return false;
 }
 	
 }
+
 

@@ -1,29 +1,24 @@
 <?php
-
-
 require_once 'dsp.php';
-
 require_once '../../../../init.php';
-
 require_once MAX_PATH . '/lib/OA/Dal/Delivery/mysql.php';
- 
+require_once MAX_PATH . '/plugins/deliveryLimitations/Client/Useragent.delivery.php';
+require_once MAX_PATH . '/plugins/deliveryLimitations/Client/Browser.delivery.php';
+require_once MAX_PATH . '/plugins/deliveryLimitations/Client/Domain.delivery.php';
+require_once MAX_PATH . '/plugins/deliveryLimitations/Client/Language.delivery.php';
+require_once MAX_PATH . '/plugins/deliveryLimitations/Client/ConnectionType.delivery.php';
+require_once MAX_PATH . '/plugins/deliveryLimitations/Client/InApp.delivery.php';
+require_once MAX_PATH . '/plugins/deliveryLimitations/Client/Os.delivery.php';
+require_once MAX_PATH . '/plugins/deliveryLimitations/Time/Hour.delivery.php';
+require_once MAX_PATH . '/plugins/deliveryLimitations/Time/Day.delivery.php';
+require_once MAX_PATH . '/plugins/deliveryLimitations/Time/Date.delivery.php';
+$DSP_NAME_TO_ID['testsmaato'] = 6;
+$cur_date = date('Y-m-d H:i:s');
 
-/*
-$con = mysql_pconnect($GLOBALS['_MAX']['CONF']['database']['host'],$GLOBALS['_MAX']['CONF']['database']['username'],$GLOBALS['_MAX']['CONF']['database']['password']);
-mysql_select_db($GLOBALS['_MAX']['CONF']['database']['name'], $con);
-*/
 $table_prefix = $GLOBALS['_MAX']['CONF']['table']['prefix'];
-/*
-if (mysql_connect_errno($con))
-{
-  echo "Failed to connect to MySQL: " . mysqli_connect_error();
-}
-else
-{	*/	 
+
 
 		$queryString = array("testbid"=>"bid");
-	
-	
 		http_build_query($queryString);
 	
 		if(!isset( $HTTP_RAW_POST_DATA)) 
@@ -35,15 +30,8 @@ else
 
 		$jsonStr = $HTTP_RAW_POST_DATA;
 		
-		$req_arr = $_POST;//json_decode($jsonStr, true);
-		
-		
-		error_log("[".date('d-m-Y H:i:s')."]",3,"smaato_data.log");
-		error_log(PHP_EOL,3,"smaato_data.log");
-		error_log(print_r($jsonStr,true),3,"smaato_data.log");
-		error_log(PHP_EOL,3,"smaato_data.log");
-		
-
+		$req_arr = json_decode($jsonStr, true);
+	
 			if(!empty($req_arr))
 		{
 				// Auction Type
@@ -131,6 +119,9 @@ else
 				{
 					$badv_arr = $req_arr['badv'];
 				} else { $badv_arr = array(); }
+				
+				
+				
 			
 				$data['at'] = $at;
 				$data['id'] = $bid_req_id;
@@ -148,7 +139,10 @@ else
 				$data['badv'] = implode(',',$badv_arr);
 				$data['coppa'] = $req_arr['ext']['coppa'];
 				$data['operaminibrowser'] = $req_arr['ext']['operaminibrowser'];
-				
+				$data['ua'] = $req_arr['device']['ua'];
+				$data['os'] = $req_arr['device']['os'];
+				$data['model'] = $req_arr['device']['model'];
+
 				// Inserting informations to table Smaato request
 				$con_type = $req_arr['device']['connectiontype'];
 				$dev_type = $req_arr['device']['devicetype'];
@@ -161,6 +155,19 @@ else
 				$dev_model = @mysql_real_escape_string($req_arr['device']['model']);
 				$dev_os		=$req_arr['device']['os'];
 				$dev_ua 	= @mysql_real_escape_string($req_arr['device']['ua']);
+				
+				$GLOBALS['_MAX']['CONF']['request_info']['bid_id'] = $bid_req_id;
+				
+				$GLOBALS['_MAX']['CLIENT']['ua'] = $req_arr['device']['ua'];
+				$GLOBALS['_MAX']['CLIENT']['os'] = $req_arr['device']['os'];
+				$GLOBALS['_MAX']['CLIENT']['osv'] = $req_arr['device']['osv'];
+				$GLOBALS['_MAX']['CLIENT']['connectiontype'] = $req_arr['device']['connectiontype'];
+				if(!empty($app_arr)) {
+					$GLOBALS['_MAX']['CLIENT']['inapp'] = 1;	
+				} else{
+					$GLOBALS['_MAX']['CLIENT']['inapp'] = 0;	
+				}
+			
 			
 				if(!empty($req_arr['ext']['udi']))
 				{
@@ -212,62 +219,19 @@ else
 				$impbp='0';
 
 
-			$fetch_dsp=OA_Dal_Delivery_fetchAssoc(OA_Dal_Delivery_query("select id from rv_dj_dsp where dsp_portal_name='".$_REQUEST['dsp']."' and  status='1'"));
-			
-			/*if(strcasecmp($_REQUEST['dsp'],'testsmaato') ==0) {
-			$fetch_dsp['id']=6;
-			}
-			*/
-			
-			$cur_date = date('Y-m-d H:i:s');
-		
+			$fetch_dsp['id']=$DSP_NAME_TO_ID[strtolower($_REQUEST['dsp'])];
 
 			if(!empty($fetch_dsp['id']))
 			{
 
 			/* Log DSP request into database*/
 
-			/*	
-			$requery=OA_Dal_Delivery_query("INSERT INTO  `{$table_prefix}dj_dsp_bid_request` (
-				`datetime` ,
-				`at` ,
-				`exchange_id`,
-				`device_connectiontype` ,
-				`device_devicetype` ,
-				`device_geo_country` ,
-				`device_geo_latitude` ,
-				`device_geo_longitude` ,
-				`device_geo_type` ,
-				`device_ip` ,
-				`device_js` ,
-				`device_make` ,
-				`device_model` ,
-				`device_os` ,
-				`device_ua` ,
-				`ext_udi` ,
-				`bid_request_id` ,
-				`imp_banner_type` ,
-				`imp_banner_height` ,
-				`imp_banner_mimes` ,
-				`imp_banner_position` ,
-				`imp_banner_width` ,
-				`imp_bidfloor` ,
-				`imp_displaymanager` ,
-				`imp_id` ,
-				`site_category` ,
-				`site_domain` ,
-				`site_id` ,
-				`site_name` ,
-				`publisher_id` ,
-				`user_gender` ,
-				`user_yob`,bcat,badv,ext_coppa,ext_operaminibrowser
-				)
-				VALUES (
-				'".$cur_date."', '".$at."', '".$fetch_dsp['id']."','".$con_type."', '".$dev_type."', '".$dgc."', '".$geo_lat."', '".$geo_lon."', '".$geo_type."', '".$dev_ip."', '".$dev_js."', '".$dev_make."', '".$dev_model."', '".$dev_os."', '".$dev_ua."', '".$ext_udi."', '".$b_id."', '".$b_type."', '".$b_height."', '".$b_mime."', 0, '".$b_width."', '".$bid_floor."', '".$display_manager."', '".$bid."', '".$scat."', '".$s_domain."', '".$s_id."', '".$s_name."', '".$s_p_id."', '".$gender."', '".$dob."','".$data['bcat']."','".$data['badv']."','".$data['coppa']."','".$data['operaminibrowser']."')"); 
-	
-			$erid=mysql_insert_id();
-			*/
+				
+			$requery= $cur_date."|!|".$at."|!|".$fetch_dsp['id']."|!|".$con_type."|!|".$dev_type."|!|".$dgc."|!|".$geo_lat."|!|".$geo_lon."|!|".$geo_type."|!|".$dev_ip."|!|".$dev_js."|!|".$dev_make."|!|".$dev_model."|!|".$dev_os."|!|".$dev_ua."|!|".$ext_udi."|!|".$b_id."|!|".$b_type."|!|".$b_height."|!|".$b_mime."'|!| 0|!| '".$b_width."|!|".$bid_floor."|!|".$display_manager."|!|".$bid."|!|".$scat."|!|".$s_domain."|!|".$s_id."|!|".$s_name."|!|".$s_p_id."|!|".$gender."|!|".$dob."|!|".$data['bcat']."|!|".$data['badv']."|!|".$data['coppa']."|!|".$data['operaminibrowser']."|!|".$req_arr['device']['ua']; 
+			error_log($requery.PHP_EOL,3,"../../../../logs/dsp.6.".date('Y-m-d_H').".log");
 			
+			
+				
 			}
 		} 
 
@@ -278,9 +242,9 @@ else
 	/*Serialize the bid request into adserver*/
 
 	$arr_serialize = serialize($data);
-
 	$output=dsp_adprocessing($arr_serialize,$fetch_dsp['id']);
 
+	
 	}
 
 	if($output['adtype']=='web')
@@ -302,14 +266,13 @@ else
 	}
 	else
 	{
-	 //error_log("IP ADDRESS =>".$dev_ip,3,"req.log");
-	// error_log("\n",3,"req.log");
 	 	 	 	
 	 header("HTTP/1.0 204");	
 	}
 
 	$djax_adm	=	str_replace("\n","",$djax_adm);
-/********** bid response **********/
+	
+	/********** bid response **********/
 	if($_GET['testbid']!="nobid")
 	{
 
@@ -356,12 +319,7 @@ else
 	{
 
 		$response 	= 	json_encode($value);
-	
-		//	error_log(print_r($req_arr,true),3,"req.log");
-			
-		//error_log(print_r($response,true),3,"res.log");
-
-	print_r($response);
+		print_r($response);
 	}
 	/********** Price is zero **********/
 	else
