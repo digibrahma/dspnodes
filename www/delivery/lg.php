@@ -24,7 +24,8 @@
  * file(s) in the "delivery_dev" folder; and regenerate the delivery files
  * using the script located in the "scripts/delivery" directory.
  */
-
+//error_log(date('Y-m-d H:i:s').'|'.$_SERVER['REQUEST_URI'].PHP_EOL,3,'../../logs/lg-'.date('Y-m-d_H').'.txt');
+ 
 function parseDeliveryIniFile($configPath = null, $configFile = null, $sections = true)
 {
 if (!$configPath) {

@@ -1,4 +1,5 @@
 <?php
+
 define('CONST_CSS','
 
 <!-- Latest compiled and minified CSS -->
