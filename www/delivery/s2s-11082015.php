@@ -1,13 +1,18 @@
 <?php
 
-
-$s2s[12] = 'https://affle.co/global/activation.php?af_cid={pid1}&af_tid={pid2}';
-$s2s[13] = 'https://affle.co/global/activation.php?af_cid={pid1}&af_tid={pid2}';
-$s2s[15] = 'https://affle.co/global/activation.php?af_cid={pid1}&af_tid={pid2}';
+$s2s[7] = 'http://pixel.leadzu.com/pixel.php?service=1318&hash=';
+$s2s[8] = 'http://click.ezmob.com/traffic/pixel/8df02755ef8c4f9289b3deef67995ab1/?mytoken=';
+$s2s[10] = 'http://cb.adtwirl.com/callback.php?subid=';
+$s2s[11] = 'http://pixel.leadzu.com/pixel.php?service=1318&hash=';
+$s2s[19] = 'http://mobistein.com/app/conversion?jp=';
+$s2s[22] = 'http://ketads.com/site/postback?affiliate_id={affiliate_id}&transaction_id=';
+$s2s[24] = 'https://affle.co/global/activation.php?af_cid={tid1}&af_tid={tid2}';
+$s2s[25] = 'http://www.securebill.mobi/bg.php?idcallback=11325883f727b7565fc495ddf786e79e&clickID=';
+$s2s[26] = 'http://mobistein.com/app/conversion?jp=';
 
 if(strlen($s2s[$results['tracker_id']])>1) {
     
-/*
+
 $split_count = substr_count($results['publisher_tid'],'|');
 	
 	if($split_count==0) {
@@ -20,11 +25,7 @@ $split_count = substr_count($results['publisher_tid'],'|');
 			$s2s_url = str_ireplace('{tid2}',$tid_2,$s2s_url);
 			
 	}
-	
-*/
-
-    $s2s_url = str_ireplace('{pid1}',$results['publisher_tid'],$s2s[$results['tracker_id']]);	
-    $s2s_url = str_ireplace('{pid2}',$results['publisher_tid2'],$s2s_url);	 
+    
     $s2s_output = file_get_contents($s2s_url);
     $log_data = date("Y-m-d G:i:s")."#".$results['tracker_id']."#".$results['publisher_tid']."#".$s2s_url."#".$s2s_output."\n";
     

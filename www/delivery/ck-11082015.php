@@ -3197,7 +3197,6 @@ $fetch_rows=OA_Dal_Delivery_query($query_val);
 
 $results=OA_Dal_Delivery_fetchAssoc($fetch_rows);
 $publisher_tid=$_REQUEST['pid'];
-$publisher_tid2=$_REQUEST['pid2'];
 
 if($results['cookieless_tracker']=='1')
 {
@@ -3227,7 +3226,7 @@ if($results['cookieless_tracker']=='1')
                 
                 
 		
-		$query="INSERT INTO djax_s2s_track(transaction_id,ad_id,zone_id,tracker_id,viewerid,timestamp,publisher_tid,publisher_tid2) VALUES('$transaction_id','$ad_id','$zone_id','$trackerid','$viewerId','$date_time','$publisher_tid','$publisher_tid2')";
+		$query="INSERT INTO djax_s2s_track(transaction_id,ad_id,zone_id,tracker_id,viewerid,timestamp,publisher_tid) VALUES('$transaction_id','$ad_id','$zone_id','$trackerid','$viewerId','$date_time','$publisher_tid')";
 
 		OA_Dal_Delivery_query($query);
 
