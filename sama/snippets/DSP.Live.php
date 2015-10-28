@@ -59,8 +59,7 @@ if(!in_array($Push_Data['type'],$Dip_Types)) {
 
 
 /// T-1 Data for comparison ////
-$Get_T_Minus_1_Data = mysqli_query($dbLink,"select dsp as service,  type, value, date, if(date_format(date,'%k')=0,1,date_format(date,'%k')+1) as hr from sama_livemis where dsp in (".$Service.") and date >='".(strtotime($Date)-24*60*60)." 00:00:00' and date <= '".date("Y-m-d",strtotime($Date)-24*60*60)." 23:00:00'  order by type ASC") or die(mysqli_error());
-
+$Get_T_Minus_1_Data = mysqli_query($dbLink,"select dsp as service,  type, value, date, if(date_format(date,'%k')=0,1,date_format(date,'%k')+1) as hr from sama_livemis where dsp in (".$Service.") and date >='".date("Y-m-d",strtotime($Date)-24*60*60)." 00:00:00' and date <= '".date("Y-m-d",strtotime($Date)-24*60*60)." 23:00:00'  order by type ASC") or die(mysqli_error());
 
 while($Push_T_Minus_1_Data = mysqli_fetch_array($Get_T_Minus_1_Data)) {
 	

@@ -26,10 +26,10 @@ $split_count = substr_count($results['publisher_tid'],'|');
     $s2s_url = str_ireplace('{pid1}',$results['publisher_tid'],$s2s[$results['tracker_id']]);	
     $s2s_url = str_ireplace('{pid2}',$results['publisher_tid2'],$s2s_url);	 
     $s2s_output = file_get_contents($s2s_url);
-    $log_data = date("Y-m-d G:i:s")."#".$results['tracker_id']."#".$results['publisher_tid']."#".$s2s_url."#".$s2s_output."\n";
+    $log_data = date("Y-m-d G:i:s")."#".$results['tracker_id']."#".$results['publisher_tid']."#".$s2s_url."#".$s2s_output.PHP_EOL;
     
     
-    $handle = fopen('../log/s2s_log_'.$results['tracker_id'].'_'.date("Y-m-d").'.txt', 'a+');
+    $handle = fopen('../../logs/s2s.outgoing.'.$results['tracker_id'].'.'.date("Y-m-d").'.log', 'a+');
     fwrite($handle, $log_data);
     fclose($handle);
     
