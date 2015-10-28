@@ -8,3 +8,17 @@ var/rig.digibramha.com.conf copy.bak
 var/staging.digibrahma.in.conf.php
 
 *.log
+
+var/cache/minify_8b50b2736bbbe081748da17320bced6b
+
+var/cache/cache_localhost_ComponentHooks_Plugins
+
+*.zd
+
+*.zg
+
+var/localhost.conf.php
+
+var/dspnode2.digibrahma.in.conf.php
+
+var/dspnode2.digibrahma.in.conf.php

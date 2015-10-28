@@ -31,7 +31,7 @@ require_once MAX_PATH . '/lib/max/Dal/DataObjects/Campaigns.php';
 
 
 // Register input variables
-phpAds_registerGlobalUnslashed ( 'start', 'startSet', 'anonymous', 'campaignname', 'clicks', 'companion', 'show_capped_no_cookie', 'comments', 'conversions', 'end', 'endSet', 'priority', 'high_priority_value', 'revenue', 'revenue_type', 'submit', 'submit_status', 'target_old', 'target_type_old', 'target_value', 'target_type', 'rd_impr_bkd', 'rd_click_bkd', 'rd_conv_bkd', 'impressions', 'weight_old', 'weight', 'clientid', 'status', 'status_old', 'previousimpressions', 'previousconversions', 'previousclicks' );
+phpAds_registerGlobalUnslashed ( 'start', 'startSet', 'anonymous', 'campaignname', 'clicks', 'companion', 'show_capped_no_cookie', 'comments', 'conversions', 'end', 'endSet', 'priority', 'high_priority_value', 'revenue', 'revenue_type', 'submit', 'submit_status', 'target_old', 'target_type_old', 'target_value', 'target_type', 'rd_impr_bkd', 'rd_click_bkd', 'rd_conv_bkd', 'impressions', 'weight_old', 'weight', 'clientid', 'status', 'status_old', 'previousimpressions', 'previousconversions', 'previousclicks');
 
 // Security check
 OA_Permission::enforceAccount ( OA_ACCOUNT_MANAGER );
@@ -60,7 +60,6 @@ if ($campaignid != "") {
     $doCampaigns->selectAdd ( "views AS impressions" );
     $doCampaigns->get ( $ID );
     $data = $doCampaigns->toArray ();
-
     $campaign['campaignname'] = $data ['campaignname'];
     $campaign['impressions'] = $data ['impressions'];
     $campaign['clicks'] = $data ['clicks'];
@@ -85,6 +84,8 @@ if ($campaignid != "") {
         $campaign['activate_date'] = $oActivateDate->format('%Y-%m-%d');
     }
     $campaign['priority'] = $data ['priority'];
+    $campaign['adomain'] = $data ['adomain'];
+    $campaign['category'] = explode(',',$data['category']);
     $campaign['weight'] = $data ['weight'];
     $campaign['target_impression'] = $data ['target_impression'];
     $campaign['target_click'] = $data ['target_click'];
@@ -728,7 +729,7 @@ OA_Dal_Delivery_connect(); // Database Object Creation
 				$cat_query 	=	mysql_query("SELECT categories FROM `rv_dsp_portal_categories` where campaign_id='".$_GET['campaignid']."' and portal_id='".$row['id']."'");
 				$cat_row	=	mysql_fetch_array($cat_query);
 				$form->addElement('hidden', $row['id'],array('id'=>$row['id']));
-							$dbHolder	=$dbHolder."<tr height='30' style='padding:3px;'  class='list'><td height='25'><input  class='dsp_portal' id='".$row['dsp_portal_name']."' onclick=openPortal('".$row['dsp_portal_name']."') name='dspPortals[]' type='checkbox' checked value='".$row['id']."'/></td><td height='25'>".$row['dsp_portal_name']."<select multiple='multiple name='".$row['dsp_portal_name']."' class='".$row['dsp_portal_name']."' style='width:250px;'>";
+							$dbHolder	=$dbHolder."<tr height='30' style='padding:3px;'  class='list'><td height='25'><input  class='dsp_portal' id='".$row['dsp_portal_name']."' onclick=openPortal('".$row['dsp_portal_name']."') name='dspPortals[]' type='checkbox' checked value='".$row['id']."'/></td><td height='25'>".$row['dsp_portal_name']."<select multiple='multiple' name='".$row['dsp_portal_name']."' class='".$row['dsp_portal_name']."' style='width:250px;'>";
 				// Selected category			
 				foreach($dspcategory as $key=>$value):  
 					if (in_array($key, explode(',',$cat_row[0])))
@@ -746,7 +747,7 @@ OA_Dal_Delivery_connect(); // Database Object Creation
 			{
 				
 				$form->addElement ( 'hidden', $row['id'] ,array('id'=>$row['id']));
-						$dbHolder=$dbHolder."<tr height='30' class='list' style='padding:3px;'><td height='25'><input class='dsp_portal' id='".$row['dsp_portal_name']."' onclick=openPortal('".$row['dsp_portal_name']."') name='dspPortals[]' type='checkbox' value='".$row['id']."'/></td><td height='25'>".$row['dsp_portal_name']."<select multiple='multiple name='".$row['dsp_portal_name']."' class='".$row['dsp_portal_name']."' style='width:250px;'>";
+						$dbHolder=$dbHolder."<tr height='30' class='list' style='padding:3px;'><td height='25'><input class='dsp_portal' id='".$row['dsp_portal_name']."' onclick=openPortal('".$row['dsp_portal_name']."') name='dspPortals[]' type='checkbox' value='".$row['id']."'/></td><td height='25'>".$row['dsp_portal_name']."<select multiple='multiple' name='".$row['dsp_portal_name']."' class='".$row['dsp_portal_name']."' style='width:250px;'>";
 				foreach($dspcategory as $key=>$value):  
 				if (in_array($key, explode(',',$cat_row[0])))
 						{
@@ -771,7 +772,7 @@ OA_Dal_Delivery_connect(); // Database Object Creation
 		{
 			
 			$form->addElement ( 'hidden', $row['id'] ,array('id'=>$row['id']));
-				$dbHolder=$dbHolder."<tr height='30'  class='list' style='padding:3px;'><td height='25'><input class='dsp_portal' id='".$row['dsp_portal_name']."'  onclick=openPortal('".$row['dsp_portal_name']."',thi) name='dspPortals[]' type='checkbox' value='".$row['id']."'/></td><td height='25'>".$row['dsp_portal_name']."<select multiple='multiple name='".$row['dsp_portal_name']."' class='".$row['dsp_portal_name']."' style='width:250px;'>";
+				$dbHolder=$dbHolder."<tr height='30'  class='list' style='padding:3px;'><td height='25'><input class='dsp_portal' id='".$row['dsp_portal_name']."'  onclick=openPortal('".$row['dsp_portal_name']."',thi) name='dspPortals[]' type='checkbox' value='".$row['id']."'/></td><td height='25'>".$row['dsp_portal_name']."<select multiple='multiple' name='".$row['dsp_portal_name']."' class='".$row['dsp_portal_name']."' style='width:250px;'>";
 			foreach($dspcategory as $key=>$value):  
 			if (in_array($key, explode(',',$cat_row[0])))
 					{
@@ -791,8 +792,39 @@ OA_Dal_Delivery_connect(); // Database Object Creation
  '.$dbHolder.'
  </table></div>
 ','');
-	
+
+    $form->addElement('header','h_camps','Campaign Descriptors');
+    
+    // IAB Category
+    asort($dspcategory);
+    
+    foreach($dspcategory as $key=>$value):  
+			if (in_array($key, $campaign['category']))
+					{
+						$campHolder.="<option value='".$key."' selected='selected'>".$value."</option>";
+					}
+					else
+					{
+						$campHolder.="<option value='".$key."'>".$value."</option>";
+					}
+			endforeach;
+                        
+    
+    $form->addElement ( 'static', 'tar', 'IAB Category of Campaign','<select name="campIAB[]" class="multiselects" multiple="multiple" style="width:250px">'.$campHolder.'</select>');
+    
+    $form->addElement('text','adomain','Advertiser Domain',array('value'=>$campaign['adomain'],'class'=>'medium'));
+    
+    
+
+ 
     $form->addElement ( 'header', 'h_misc', $GLOBALS ['strMiscellaneous'] );
+    // New Elements
+
+    
+    // End New Elements
+    
+	
+
     //section decorator to allow hiding of the section
     $form->addDecorator ( 'h_misc', 'tag', array ('attributes' => array ('id' => 'sect_misc', 'class' => $newCampaign ? 'hide' : '' ) ) );
 
@@ -1083,6 +1115,18 @@ function processCampaignForm($form, &$oComponent = null)
 			mysql_query("update rv_campaigns set dsp_portals='".$dspVal."' where campaignid='". $aFields['campaignid']."'");
 			   
 			   }
+             if(isset($_POST['campIAB'])){
+			  
+			
+			mysql_query("update rv_campaigns set category='".join($_POST['campIAB'],',')."' where campaignid='". $aFields['campaignid']."'") or die("Errr in CAMPIAM");
+			   
+			   }     
+             if(isset($_POST['adomain'])){
+			  
+			
+			mysql_query("update rv_campaigns set adomain='".$_POST['adomain']."' where campaignid='". $aFields['campaignid']."'") or die("Errr in ADOMAIN");
+			   
+			   }               
         if ($oComponent) {
             $oComponent->processCampaignForm($aFields);
         }

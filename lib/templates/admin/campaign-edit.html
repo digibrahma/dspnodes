@@ -33,9 +33,11 @@
 <script type="text/javascript">
 
 console.log('{$dsp_category}');
-	//$('.multiselects').multipleSelect();
+	$('.multiselects').multipleSelect(
+					  {filter: true}
+					  );
 	
-	$('.multiselects').hide();
+	//$('.multiselects').hide();
 	//$('#dspcategory').multipleSelect({'placeholder': "Here is the placeholder",});
 	//$('#dspcategory').multipleSelect("setSelects", ['IAB1', 'IAB1-2']);		
 	

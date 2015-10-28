@@ -553,7 +553,7 @@
         multiple: false,
         multipleWidth: 80,
         single: false,
-        filter: false,
+        filter: true,
         width: undefined,
         maxHeight: 250,
         container: null,
